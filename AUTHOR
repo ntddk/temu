@@ -1,0 +1,18 @@
+The BitBlaze Team is a research group led by Professor Dawn Song at
+University of California, Berkeley, developing technologies for
+analyzing program binaries for security applications. The past and
+current student and staff members who have contributed to this release
+include David Brumley, Juan Caballero, Cody Hartwig, Ivan Jager, Min
+Gyung Kang, Zhenkai Liang, Stephen McCamant, James Newsome, Pongsin
+Poosankam, Prateek Saxena, Heng Yin, and Jiang Zheng.
+
+In particular, Heng Yin is the key developer of the TEMU component,
+and Zhenkai Liang, Cody Hartwig and Stephen McCamant also contributed
+to parts of the code. Juan Caballero developed tracecap, a TEMU plugin
+to collect execution traces, based on an earlier trace collection
+plugin developed by Zhenkai Liang.
+
+TEMU is based on the open-source whole-system emulator QEMU.
+
+For more information about BitBlaze, please see
+http://bitblaze.cs.berkeley.edu.

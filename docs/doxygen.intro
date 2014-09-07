@@ -1,0 +1,76 @@
+/*! @mainpage TEMU User Guide
+ @author Heng Yin <hyin@cs.berkeley.edu>
+
+ @section main_intro TEMU Overview
+
+TEMU is a whole-system dynamic binary analysis platform that we
+developed on the basis of a whole-system emulator,
+QEMU. We run an entire system, including the
+operating system and applications in this emulator, and observe in a
+fine-grained manner how the binary code of interest is executed.
+The whole-system approach in TEMU is motivated by several considerations:
+
+<ul>
+<li> Many analyses require fine-grained instrumentation (i.e.,
+at instruction level) on binary code. By dynamically translating the
+emulated code, the whole-system emulator enables fine-grained
+instrumentation.
+
+<li> Whole-system emulator presents us a whole-system view.  The
+whole-system view enables us to analyze the operating system kernel
+and interactions between multiple processes. In contrast, many other
+binary analysis tools (e.g., Valgrind, DynamoRIO, Pin) only provide a
+local view (i.e., a view of a single user-mode process). This is
+particularly important for analyzing malicious code, because many
+attacks  involve multiple processes, and kernel
+attacks such as rootkits have become increasingly popular.
+
+<li> A whole-system emulator provides an excellent isolation
+between the analysis components and the code under analysis. As a
+result, it is more difficult for the code under analysis to
+interfere with analysis results.</ul>
+
+The design of TEMU is motivated by several challenges and considerations:
+<ul>
+<li>  The whole-system emulator only provides us only the hardware-level view
+of the emulated system, whereas we need a software-level view to get
+meaningful analysis results. Therefore, we need a mechanism that can
+extract the OS-level semantics from the emulated system. For
+example, we need to know what process is currently running and what
+module an instruction comes from.
+
+<li> In addition, many analyses require reasoning about how
+specific data depends on its data sources and how it propagates throughout
+the system. We enable this using whole-system dynamic taint
+analysis.
+
+<li> We need to provide a well-designed programming interface (i.e., API)
+for users to implement their own plugins on TEMU to perform their
+customized analysis. Such an interface can hide unnecessary details
+from users and reuse the common functionalities.
+
+</ul>
+
+\image html overview.png
+
+With these considerations in mind, we have designed the architecture of
+TEMU, as shown in the figure above. We build the {\em
+semantics extractor} to extract OS-level semantics information from
+the emulated system. We build the {\em taint analysis engine} to
+perform dynamic taint analysis. We define and implement an interface
+(i.e, TEMU API) for users to easily implement their own analysis
+modules (i.e. TEMU plugins). These modules can be loaded and
+unloaded at runtime to perform designated analyses. We implemented
+TEMU in Linux, and at the time of writing, TEMU can be used to
+analyze binary code in Windows 2000, Windows XP, and  Linux
+systems.
+Below we describe these three components
+respectively.
+
+
+ @section main_overview Overview
+
+ @section main_build How to build TEMU and TEMU plugins
+
+ @section main_api API Reference
+*/

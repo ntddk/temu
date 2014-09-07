@@ -1,0 +1,220 @@
+\section {Taking traces}
+
+Assuming that you have compiled TEMU and you have identified the
+command line to launch your QEMU session, we can now go ahead and try
+out a simple example trace. Here we demonstrate the procedure for a
+Ubuntu 9.04 Linux image; the commands are mostly the same for a Windows
+image.
+
+The command-line options for TEMU are mostly the same as for
+QEMU. Besides whatever options are needed for your virtual machine to
+run correctly, the example below adds two more. \verb'-snapshot' tells
+QEMU not to write changes to the virtual hard disk back to the disk
+image file unless explicitly requested, so you don't have to worry
+about messing up your VM with experiments gone awry.
+\verb'-monitor stdio' tells QEMU to put up a command-line prompt on
+your terminal, which we will use to give TEMU commands. 
+
+A  command line to launch TEMU looks like:
+
+\begin{Verbatim}[frame=lines, framesep=.5em]
+% cd ~/bitblaze/temu
+% ./tracecap/temu  -snapshot -monitor stdio ~/images/ubuntu904.qcow2
+\end{Verbatim}
+
+The output on the console is:
+
+\begin{Verbatim}[frame=lines, framesep=.5em]
+QEMU 0.9.1 monitor - type 'help' for more information
+(qemu)
+\end{Verbatim}
+
+You may also see a warning indicating that \verb'kqemu' is disabled
+for one reason or another; these may mean that your VM will run more
+slowly, but can otherwise be ignored.
+
+\begin {enumerate}
+  \item \emph {Generate a simple program in the QEMU image:}
+    In the guest Linux session, create a \texttt{foo.c} program as
+    follows, and start it:
+\begin{Verbatim}[frame=lines, framesep=.5em]
+$ cat foo.c
+#include <stdio.h>
+
+int main(int argc, char **argv)
+{
+  int x;
+  scanf("%d", &x);
+  if (x != 5)
+      printf("Hello\n");
+  return 0;
+}
+$ gcc foo.c -o foo
+$ ./foo
+
+\end{Verbatim}
+%$
+\item \emph {Load the TEMU plugin}
+
+At the \verb'(qemu)' prompt, say:
+\begin{Verbatim}[frame=lines, framesep=.5em]
+(qemu) load_plugin tracecap/tracecap.so
+Cannot determine file system type
+tracecap/tracecap.so is loaded successfully!
+(qemu) enable_emulation
+Emulation is now enabled
+\end{Verbatim}
+
+The warning about \verb'Cannot determine file system type' applies to
+functionality we won't be using, and can be
+ignored. \verb'enable_emulation' is required to activate any of TEMU's
+per-instruction tracing hooks; without it, later steps won't see any
+of the instructions executed.
+
+\item \emph {Find out the process id you the program you want to trace:}
+
+In the \verb'(qemu)' prompt, run the \texttt{linux\_ps} command to
+find the process id of the \texttt{./foo} application running in the
+guest Linux image.
+
+\begin{Verbatim}[frame=lines, framesep=.5em]
+(qemu) linux_ps
+    0  CR3=0x00000000  swapper
+    1  CR3=0xC7DEA000  init
+         0x08048000 -- 0x0804E000 init
+         0x0804E000 -- 0x0804F000 init
+         0x0804F000 -- 0x08053000 
+         0x40000000 -- 0x40013000 ld-2.2.5.so
+         0x40013000 -- 0x40014000 ld-2.2.5.so
+         0x40022000 -- 0x40023000 
+         0x42000000 -- 0x4212C000 libc-2.2.5.so
+         0x4212C000 -- 0x42131000 libc-2.2.5.so
+         0x42131000 -- 0x42135000 
+         0xBFFFD000 -- 0xC0000000 
+	 .....
+  958  CR3=0xC51A1000  foo
+         0x08048000 -- 0x08049000 foo
+         0x08049000 -- 0x0804A000 foo
+         0x40000000 -- 0x40013000 ld-2.2.5.so
+         0x40013000 -- 0x40014000 ld-2.2.5.so
+         0x40014000 -- 0x40015000 
+         0x42000000 -- 0x4212C000 libc-2.2.5.so
+         0x4212C000 -- 0x42131000 libc-2.2.5.so
+         0x42131000 -- 0x42135000 
+         0xBFFFE000 -- 0xC0000000 
+	 ....
+\end{Verbatim}
+  
+The PID, here 958, is shown on the header line for the named process.
+The other information isn't relevant for what we're doing, but if
+you're curious, the \verb'CR3' value is a pointer to the kernel-space
+page table for each process, and the remaining lines show the virtual
+address ranges for the process's various segments (mappings), which
+are either text or data segments from executables or shared libraries,
+or anonymous heap or stack areas.
+
+For a Windows image, you need to run the \texttt{guest\_ps} command
+instead of \texttt{linux\_ps}.
+
+\item \emph {Trace the process, and record the instructions it executes in a file:}
+
+The  \texttt{trace} command takes  the process  id and  the name  of a
+trace file to write information into, as shown below.
+
+\begin{Verbatim}[frame=lines, framesep=.5em]
+(qemu) trace 958 "/tmp/foo.trace"
+PID: 958 CR3: 0x06301000
+PROTOS_IGNOREDNS: 0, TABLE_LOOKUP: 1 TAINTED_ONLY: 0
+ TRACING_KERNEL_ALL: 0 TRACING_KERNEL_TAINTED: 0 TRACING_KERNEL_PARTIAL: 0
+\end{Verbatim}
+
+As an alternative to steps 3-4 above, you can also tell TEMU to begin 
+tracing a program before you've loaded it, with the \texttt{tracebyname} 
+command. This command will monitor new processes and automatically trace 
+the next instance of the target program. Example usage of this command is 
+shown below.
+
+\begin{Verbatim}[frame=lines, framesep=.5em]
+(qemu) tracebyname foo "/tmp/foo.trace"
+Waiting for process foo to start
+$ ./foo
+(qemu) PID: 472 CR3: 0x0a025000
+Tracing foo
+\end{Verbatim}
+
+\item \emph {Specify what input to taint, and give the input:}
+
+With the \texttt {taint\_sendkey} command we can send input to the
+traced process, and also mark this input as tainted.  The taint
+tracking engine will perform dynamic taint tracking, i.e. mark all
+data derived from tainted input as tainted.  If any of the operands of
+an executed instruction are tainted, the result is also marked
+tainted.  This command takes 2 arguments -- the character (really,
+keyboard key) to give as input (\texttt{5} in the example below) and
+an identifier to identify this input in the trace (given by ``1001''
+in the trace; it should not be zero).
+The trace of this process will log all data read and
+written at each instruction, the instruction itself, and the
+associated data taint in the trace file.
+
+\begin{Verbatim}[frame=lines, framesep=.5em]
+(qemu) taint_sendkey 5 1001
+Tainting keystroke: 9 00000001
+(qemu) taint_sendkey ret 1001
+Tainting keystroke: 9 00000001
+Time of first tainted data: 1197072993.761231
+(qemu) 
+\end{Verbatim}
+
+Note that TEMU is tracking taint throughout the whole simulated
+machine, but only tracing in the requested process. The \texttt{first
+tainted data} message refers to the traced program, and doesn't show
+up until a complete line has been typed, because the operating system
+is buffering the input line before that.
+
+\item \emph {Stop tracing and tainting:}
+
+We  are  done with  tainting  and tracing,  so  we  use the  following
+commands to turn off the components.
+
+\begin{Verbatim}[frame=lines, framesep=.5em]
+(qemu) trace_stop
+Stop tracing process 958
+Number of instructions decoded: 5979
+Number of operands decoded: 13349
+Number of instructions written to trace: 5890
+Number of tainted instructions written to trace: 85
+Processing time: 0.464029 U: 0.444028 S: 0.020001
+Generating file: /tmp/foo.trace.functions
+(qemu) unload_plugin
+Emulation is now disabled
+protos/protos.so is unloaded!
+\end{Verbatim}
+
+\end {enumerate}
+
+At the end, you should have a trace file generated at the file name
+you specified (\verb'/tmp/foo.trace' in the example). The trace has a
+specific binary format which is not human-readable, but you can check
+that it contains some data (it should be between about 100k and 800k
+for this example).  It
+contains instructions, concrete values of the operands seen in the
+execution of the program, and the associated taint value.
+
+As an aside, if you want to generate traces with network input rather
+than keystrokes you can follow the same steps but with two
+changes. First, after the plugin is loaded, issue the command
+\verb'taint_nic 1' to tell TEMU to mark all input
+received from the network card to as tainted. Second, instead of
+giving \texttt{taint\_sendkey}, just simply direct the input to the IP
+address/port of the virtual machine. If the input causes the EIP to
+become tainted, TEMU will immediately write all trace data and
+quit. You can use this to launch network attacks on programs in the
+guest OS image.
+
+
+
+
+
+
+

@@ -1,0 +1,177 @@
+\documentclass[11pt,onecolumn]{article}
+\usepackage{fancyvrb}
+\usepackage{fullpage}
+\usepackage{amsmath} % for \text; HeVeA doesn't know about amstext
+\usepackage{hevea}
+\usepackage{comment}
+\usepackage[dvips]{graphicx}       %%% graphics for dvips
+\usepackage[colorlinks=true, linkcolor=blue, 
+  citecolor=blue, urlcolor=blue,
+  ps2pdf,                %%% hyper-references for ps2pdf
+  bookmarks=true,        %%% generate bookmarks ...
+  bookmarksnumbered=true,%%% ... with numbers
+]{hyperref}
+% pdfcreator and pdfproducer are set automatically in pdfLaTeX
+\hypersetup{ pdfcreator  = {LaTeX with hyperref package},
+  pdfproducer = {dvips + ps2pdf} }
+\begin{latexonly}
+% HeVeA can't handle this:
+\let\url\nolinkurl % because dvips cannot break url across lines
+\end{latexonly}
+%\usepackage{times}
+
+%\includecomment{svn}
+%\excludecomment{release}
+\includecomment{release}
+\excludecomment{svn}
+
+\begin{svn}
+\newcommand{\sreither}[2]{#1}
+\end{svn}
+\begin{release}
+\newcommand{\sreither}[2]{#2}
+\end{release}
+
+% Make \_ be CMTT's underscore, not \textunderscore, since we use
+% it in code and command names.
+\def\_{\char"5F}
+\newcommand{\mytt}{\small \tt}
+\newcommand{\titled}{TEMU installation and user manual}
+\title{\mbox{}\\[-.8in]\bf \titled}
+\author{BitBlaze Team}
+\date{Nov 5th, 2009:
+\sreither{SVN trunk r1727}{Release 1.0}
+and Ubuntu 9.04}
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+This document is a quick start guide for setting up and running TEMU,
+the dynamic tracing component of the BitBlaze Binary Analysis
+Framework. It assumes that you have some familiarity with Linux.  The
+instructions are based on
+\begin{svn}
+the version of TEMU in the SVN trunk as of
+the date shown in the header,
+\end{svn}
+\begin{release}
+the release of TEMU shown in the header,
+\end{release}
+running on a vanilla Ubuntu 9.04
+distribution of Linux. We intermix instructions with explanations
+about utilities to give an overview of how things work. The goal in
+this exercise is to take a simple program, trace it on some input and
+treat its keyboard input as symbolic. You can then use the generated
+trace file in the separate Vine tutorial.
+
+\section {\label{sec:install}Installation}
+
+The following script shows the steps for
+building and installing TEMU and the other software it depends on:
+\begin{svn}
+(This is also found as
+\verb'docs/install-temu-svn.sh' in the TEMU source, 
+
+\VerbatimInput{../install-temu-svn.sh}
+\end{svn}
+\begin{release}
+(This is also found as
+\verb'docs/install-temu-release.sh' in the TEMU source, 
+
+\VerbatimInput{../install-temu-release.sh}
+\end{release}
+
+\input {setupTEMU}
+\input {traces}
+
+\section {Troubleshooting}
+This section describes some problems users have experienced when using TEMU, 
+along with the most common causes of these problems.
+
+\begin {enumerate}
+  \item \emph {TEMU does not begin tracing program}
+    \begin{itemize}
+    \item {Did you remember to \texttt{enable\_emulation} before running the program?} 
+    \item {Did you enter to correct PID (\texttt{trace} command) or correct filename 
+    (\texttt{trace\_by\_name} command)?}     
+    \item {Are you using a supported operating system? TEMU has been preconfigured for
+    Ubuntu Linux 9.04, and requires a driver to be installed on Windows systems.}     
+    \end{itemize}
+  \item \emph {Generated trace file is empty}
+    \begin{itemize}
+    \item {Did you remember to run \texttt{trace\_stop}?}     
+    \item {Are you using the \emph{tracecap} plugin? The \emph{tracecap} can be configured 
+    to write only certain types of instructions (for instance, tainted instructions) to the trace file. 
+    Check the plugin settings in the main.ini file.}       
+    \item {Did you load any HOOK files? Configuration settings in HOOKs may sometimes 
+    disable writing to the trace file until certain trigger conditions are met.} 
+    \end{itemize}  
+  \item \emph {No tainted instructions were written to the trace file}
+    \begin{itemize}
+    \item {Was any tainted data accessed by the traced program?}
+    \item {Are you loading tainted data from hard drive? Caching by the OS sometimes 
+      causes data from primary hard disk to be ``missed'' by TEMU. Try loading the tainted data 
+      from a secondary hard disk.} 
+    \end{itemize}   
+  \item \emph {Compile warnings about {\tt fastcall}}
+    \begin{itemize}
+    \item {Are you trying to compile with GCC 3.3? It isn't supported.}
+    \end{itemize}
+  \item \emph {Missing symbols starting with {\tt \_sch\_}}
+    \begin{itemize}
+    \item {These indicate a problem linking with the GNU
+        Binutils. Make sure you have matching development and runtime
+        versions of its libraries installed, and that {\tt
+          /usr/lib/libbfd.so} exists.}
+    \end{itemize}
+  \item \emph {TEMU can't find a BIOS image or keymap}
+    \begin{itemize}
+    \item {Either run {\tt make install} to put these in the locations
+        TEMU is expecting, or give their locations with the {-L} flag.}
+    \end{itemize}
+  \item \emph {{\tt linux\_ps} loops or prints garbage}
+    \begin{itemize}
+    \item {This can be caused by TEMU having incorrect information
+        about your Linux kernel. Check that the version you are
+        running is one of the already supported ones, or provide that
+        information as described in Section~\ref{sec:vmconfig}}
+    \end{itemize}
+\end {enumerate}
+
+\section {Acknowledgements}
+
+TEMU's Tracecap plugin links with OpenSSL (copyright 1998-2004 the
+OpenSSL Project), Sleuthkit (portions copyright 1997-1999 IBM and
+other authors), XED (copyright 2004-2009 Intel), and llconf (copyright
+2004-2007 Oliver Kurth). However like TEMU itself our redistribution
+of that code is WITHOUT ANY WARRANTY.
+
+\section {Reporting Bugs}
+
+\begin{svn}
+Please report bugs to the bugzilla at:
+\texttt{https://bullseye.cs.berkeley.edu/bugzilla/}.
+
+When reporting bugs in the SVN version of the software, it's most
+useful if you can reproduce your problem with the most recent trunk
+version, but if you're using an older version, please specify the
+revision number (i.e., the output of the svnversion command in your
+bug report). And please also report if you notice something wrong or
+out of date in this document.
+\end{svn}
+\begin{release}
+Though we cannot give any guarantee of support for TEMU, we are
+interested in hearing what you are using it for, and if you encounter
+any bugs or unclear points.
+%
+Please send your questions, feature suggestions, bugs (and, if you
+have them, patches) to the bitblaze-users mailing list.
+%
+Its web page is:
+\url{http://groups.google.com/group/bitblaze-users}.
+\end{release}
+
+\end{document}

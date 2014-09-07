@@ -1,0 +1,32 @@
+This instructions assume temu is properly installed, otherwise check INSTALL.
+
+0. Start TEMU
+
+1. Load plugin
+(qemu) load_plugin /path/plugin.so
+
+2. List all running processes:
+   a) in a Windows image: (qemu) guest_ps
+   b) in a Linux image: (qemu) linux_ps
+
+3. Specify which process to monitor
+(qemu) monitor_proc name_of_process
+
+4. Enable emulation
+(qemu) enable_emulation
+
+5. Specify taint source 
+  5.1 Specifiy received network data as a taint source.
+(qemu) taint_nic 1
+  5.2 Send a tainted keystroke
+(qemu) taint_sendkey a 100 
+  This will send a letter "a" into the guest, and use 100 as the taint origin.
+
+6. After the experiment, you can:
+ 6.1 simply quit
+(qemu) quit
+ 6.2 or, unload_plugin, change something, and recompile the plugin and goto step 1.
+(qemu) unload_plugin
+
+
+

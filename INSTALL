@@ -1,0 +1,12 @@
+TEMU uses Automake and Autoconf, so the basic recipe for compiling it
+is:
+
+% ./configure --target-list=i386-softmmu --cc=gcc-3.4 --proj-name=tracecap
+% make
+
+Where "tracecap" is the name of the plugin you want to build.
+("qemu-doc" in this directory describes the generic QEMU build process.)
+
+For more details, including prerequisite packages, see
+docs/install-temu-release.sh or Section 2 ("Installation") of the TEMU
+user manual.

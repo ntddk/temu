@@ -1,0 +1,54 @@
+Welcome to TEMU, release 1.0.
+
+Copyright (C) 2006-2009, BitBlaze Team
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as
+published by the Free Software Foundation; either version 2.1 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this program (in the file COPYING.LIB); if not, see
+<http://www.gnu.org/licenses/>.
+
+The XED library has its own license, which can be found in shared/xed2.
+
+------------------------------------------------------------------------
+
+For more information about TEMU and other BitBlaze software, see our
+web site at:
+
+http://bitblaze.cs.berkeley.edu/
+
+The primary documentation for TEMU is a user manual, available in HTML
+and PDF format at:
+
+http://bitblaze.cs.berkeley.edu/release/temu-1.0/howto.html
+http://bitblaze.cs.berkeley.edu/release/temu-1.0/howto.pdf
+
+For general questions regarding to the BitBlaze project, please send
+email to bitblaze@gmail.com.
+
+To receive announcements about further code releases and other
+BitBlaze related updates, please subscribe to the Bitblaze
+Announcement List at:
+
+https://lists.eecs.berkeley.edu/sympa/info/bitblaze-announcements
+
+If you use TEMU in academic research, we request that you acknowledge
+it by citing the following paper:
+
+"BitBlaze: A New Approach to Computer Security via Binary Analysis"
+Dawn Song, David Brumley, Heng Yin, Juan Caballero, Ivan Jager, Min
+Gyung Kang, Zhenkai Liang, James Newsome, Pongsin Poosankam, and
+Prateek Saxena. Keynote Invited Paper, In Proceedings of the 4th
+International Conference on Information Systems Security, December
+2008.
+
+and by including a link to our web site at
+http://bitblaze.cs.berkeley.edu/.

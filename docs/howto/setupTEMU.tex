@@ -1,0 +1,145 @@
+\section {\label{sec:vmconfig}Configuring a new VM}
+While QEMU itself is compatible with almost any guest OS that runs on
+x86 hardware, TEMU requires more knowledge about the OS to bridge the
+semantic gap and provide information about OS abstractions like
+processes.
+For Linux, we embed knowledge about kernel data structures directly
+into TEMU; the same approach could potentially be used for Windows,
+but TEMU's current Windows support uses an extra driver that runs
+within the guest.
+This release of TEMU works out-of-the-box with VMs running Ubuntu
+Linux 9.04 32-bit.
+A few extra steps are required to support Windows XP or other versions
+of Linux.
+
+\begin{itemize}
+\item \textbf{Windows-based VMs}
+TEMU supports Windows XP (we've tested with SP1, SP2, and SP3), with
+the installation of a support driver.
+(We have not tested versions prior to XP, and Windows Vista or Windows
+7 are not supported.)
+The driver is found in both source and binary form in the
+\texttt{testdrv/driver} directory of the TEMU release.
+To install the driver, first copy the \texttt{testdrv.sys} driver file
+into the \verb'%SYSTEM32%\drivers' directory (i.e., typically 
+\verb'C:\Windows\system32\drivers').
+Then, double-click the \texttt{testdrv.reg} file to copy its contents
+into the registry to configure the driver; it will then be loaded on
+the next reboot.
+To confirm that the driver is working correctly, look for a
+\texttt{guest.log} file created in the directory where you are running
+TEMU; it shows some of the data collected by TEMU.
+
+\item \textbf{Linux-based VMs}
+Because TEMU's Linux support requires more intimate knowledge of OS
+internals, it is more version-dependent than Windows support.
+TEMU's \texttt{kernel\_table} data structure, found in
+\texttt{shared/read\_linux.c} in the source, contains information
+about the location and layout of kernel global data, and the addresses
+of functions whose execution to monitor; unfortunately this
+information is different for different kernel versions and Linux
+distributions.
+As distributed, TEMU supports the kernel from a recent version of
+Ubuntu Linux 9.04, as well as some older ones, but you must collect
+the information anew to support a new kernel or distribution version.
+
+Most of this information (all, for some 2.4 kernels) can be collected
+automatically using a kernel module whose source is found in the
+\texttt{shared/kernelinfo} directory.
+There are several sample variants for different distribution versions;
+\texttt{procinfo-ubuntu-hardy}, which was originally created for Ubuntu
+8.04 and also works for 9.04, would be a good starting point for
+modern 2.6-based systems.
+Copy the module source to your guest VM, and compile it there (you
+should have the kernel header files matching the running kernel
+installed).
+Then, load the module using the \texttt{insmod} command, and look for
+its output in the kernel's logs (e.g., \texttt{/var/log/kern.log}) or
+the kernel log ring buffer (displayed by the \texttt{dmesg} command).
+Then copy these entries to \texttt{shared/read\_linux.c} and recompile
+TEMU.
+For 2.6 kernels, we haven't been able to find an appropriate hooking
+function that is exported to modules, so you'll need to find the
+address of a function that is called after a new process is created
+using the kernel's symbol table (usually kept in a file like
+\texttt{/boot/System.map-2.6.28-15-generic}), and add it as the second
+value in the information structure by hand.
+For recent kernels, we've found the function
+\texttt{flush\_signal\_handlers} works well.
+\end{itemize}
+
+After performing the above steps, you can check that things are OK by 
+running the \texttt{guest\_ps} (Windows) or \texttt{linux\_ps} (Linux) command, and 
+verifying that the current processes are correctly displayed; an error in the configuration 
+will likely cause this command to output garbage, or cause TEMU to crash/hang.
+
+\section {Setting up TEMU network}
+\label {sec:setup}
+
+Running QEMU by itself should be the first step, before you try to run
+TEMU. There are many platform specific tweaks that you may need in
+order to get QEMU usable for your project. Though not needed for this
+excercise, you will often need to set up a network inside the QEMU
+image that you use. You may skip this network setup section, if you
+will not need this.
+
+This document does not intend to go into great depth in setting up
+QEMU itself.  But we describe some mechanisms that have worked for
+us. You may need a bit Googling to set this up on your specific
+platform and network configuration.
+
+\begin{itemize}
+
+\item \textbf{Method 1} - User-level network emulation
+
+The simplest kind of network emulation, which QEMU performs by
+default, uses just user-level network primitives on the host side, and
+simulates a private network for the virtual machine. This is
+sufficient for many utility purposes, such as transferring files to
+and from the virtual machine, but it may not be accurate enough for
+some kinds of malicious network use. The QEMU options for enabling
+this mode explicitly are
+\verb'-net nic -net user,hostname=mybox', where \verb'mybox' is the
+hostname for the virtual DHCP server to provide to the VM.
+
+If you want to connect to well-known services on the VM, you'll need
+to redirect them to alternate ports on the host with the
+\verb'-redir' option. For instance, to make it possible to SSH to a
+server on the VM, give QEMU the option \verb'-redir tcp:2022::22',
+then tell your SSH client to connect to port 2022 on the local
+machine.
+
+\item \textbf{Method 2} -  Use tap network interface.
+\begin{Verbatim}[frame=lines, framesep=.5em]
+Create a script /etc/qemu-ifup, including the following lines. Be sure to make 
+this script executable.
+#!/bin/sh
+sudo /sbin/ifconfig $1 192.168.10.1
+
+You must then setup a tap interface. This step can be skipped if you
+are willing to run QEMU as root.
+$ sudo apt-get install uml-utilities
+$ sudo /usr/sbin/tunctl -b user -t tap0
+
+Start the Windows VM. The host machine will have the IP address
+192.168.10.1, as is specified in the above script.
+$ sudo chmod 666 /dev/net/tun
+$ qemu -kernel-kqemu -snapshot -net nic,vlan=0 \
+  -net tap,vlan=0,script=/etc/qemu-ifup \
+  -monitor stdio /path/to/qemu/image
+  
+If you don't want to type these commands each time you start TEMU,
+you can create a wrapper script which initializes the network,
+starts TEMU with desired command-line arguments, then removes the
+tap interface once TEMU exits.
+\end{Verbatim}
+%$
+
+\end{itemize}
+
+Once QEMU is set up and running, TEMU should run in the same way. You
+can run TEMU's \texttt{qemu} as root, just the same way as you run
+QEMU using the installed \texttt{qemu} in the PREFIX directory.
+
+
+
