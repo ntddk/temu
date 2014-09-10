@@ -1,4 +1,12 @@
 /*
+TEMU is Copyright (C) 2006-2010, BitBlaze Team.
+
+TEMU is based on QEMU, a whole-system emulator. You can redistribute
+and modify it under the terms of the GNU LGPL, version 2.1 or later,
+but it is made available WITHOUT ANY WARRANTY.
+*/
+
+/*
  *  i386 micro operations (included several times to generate
  *  different operand sizes)
  * 
@@ -94,7 +102,7 @@ static int glue(compute_all_add, SUFFIX)(void)
     of = lshift((src1 ^ src2 ^ -1) & (src1 ^ CC_DST), 12 - DATA_BITS) & CC_O;
 #if TAINT_FLAGS
 	UPDATE_CC_FLAGS(cf | pf | af | zf | sf | of);
-    taintcheck_update_all_eflags();
+    taintcheck_update_all_eflags(3);
 #endif
     return cf | pf | af | zf | sf | of;
 }
@@ -107,7 +115,7 @@ static int glue(compute_c_add, SUFFIX)(void)
     cf = (DATA_TYPE)CC_DST < (DATA_TYPE)src1;
 #if TAINT_FLAGS
 	UPDATE_CF(cf);
-    taintcheck_update_eflags(CC_C); 
+    taintcheck_update_eflags(CC_C, 3); 
 #endif
     return cf;
 }
@@ -126,7 +134,7 @@ static int glue(compute_all_adc, SUFFIX)(void)
     of = lshift((src1 ^ src2 ^ -1) & (src1 ^ CC_DST), 12 - DATA_BITS) & CC_O;
 #if TAINT_FLAGS
 	UPDATE_CC_FLAGS(cf | pf | af | zf | sf | of);
-    taintcheck_update_all_eflags();
+    taintcheck_update_all_eflags(3);
 #endif
     return cf | pf | af | zf | sf | of;
 }
@@ -139,7 +147,7 @@ static int glue(compute_c_adc, SUFFIX)(void)
     cf = (DATA_TYPE)CC_DST <= (DATA_TYPE)src1;
 #if TAINT_FLAGS
 	UPDATE_CF(cf);
-    taintcheck_update_eflags(CC_C);
+    taintcheck_update_eflags(CC_C, 3);
 #endif
     return cf;
 }
@@ -158,7 +166,7 @@ static int glue(compute_all_sub, SUFFIX)(void)
     of = lshift((src1 ^ src2) & (src1 ^ CC_DST), 12 - DATA_BITS) & CC_O;
 #if TAINT_FLAGS
 	UPDATE_CC_FLAGS(cf | pf | af | zf | sf | of);
-    taintcheck_update_all_eflags();
+    taintcheck_update_all_eflags(3);
 #endif
     return cf | pf | af | zf | sf | of;
 }
@@ -172,7 +180,7 @@ static int glue(compute_c_sub, SUFFIX)(void)
     cf = (DATA_TYPE)src1 < (DATA_TYPE)src2;
 #if TAINT_FLAGS
 	UPDATE_CF(cf);
-    taintcheck_update_eflags(CC_C);
+    taintcheck_update_eflags(CC_C, 3);
 #endif
     return cf;
 }
@@ -191,7 +199,7 @@ static int glue(compute_all_sbb, SUFFIX)(void)
     of = lshift((src1 ^ src2) & (src1 ^ CC_DST), 12 - DATA_BITS) & CC_O;
 #if TAINT_FLAGS
 	UPDATE_CC_FLAGS(cf | pf | af | zf | sf | of);
-    taintcheck_update_all_eflags();
+    taintcheck_update_all_eflags(3);
 #endif
     return cf | pf | af | zf | sf | of;
 }
@@ -205,7 +213,7 @@ static int glue(compute_c_sbb, SUFFIX)(void)
     cf = (DATA_TYPE)src1 <= (DATA_TYPE)src2;
 #if TAINT_FLAGS
 	UPDATE_CF(cf);
-    taintcheck_update_eflags(CC_C);
+    taintcheck_update_eflags(CC_C, 3);
 #endif
     return cf;
 }
@@ -221,7 +229,7 @@ static int glue(compute_all_logic, SUFFIX)(void)
     of = 0;
 #if TAINT_FLAGS
 	UPDATE_CC_FLAGS(cf | pf | af | zf | sf | of);
-    taintcheck_update_all_eflags();
+    taintcheck_update_all_eflags(2);
 #endif
     return cf | pf | af | zf | sf | of;
 }
@@ -230,9 +238,7 @@ static int glue(compute_c_logic, SUFFIX)(void)
 {
 #if TAINT_FLAGS
 	UPDATE_CF(0);
-    taintcheck_reg_clean(R_CC_SRC);
-    taintcheck_reg_clean(R_CC_DST);
-    taintcheck_update_eflags(CC_C);
+    taintcheck_update_eflags(CC_C, 0);
 #endif
     return 0;
 }
@@ -251,7 +257,7 @@ static int glue(compute_all_inc, SUFFIX)(void)
     of = ((CC_DST & DATA_MASK) == SIGN_MASK) << 11;
 #if TAINT_FLAGS
 	UPDATE_CC_FLAGS(cf | pf | af | zf | sf | of);
-    taintcheck_update_all_eflags();
+    taintcheck_update_all_eflags(3);
 #endif
     return cf | pf | af | zf | sf | of;
 }
@@ -261,9 +267,7 @@ static int glue(compute_c_inc, SUFFIX)(void)
 {
 #if TAINT_FLAGS
 	UPDATE_CF(CC_SRC);
-    taintcheck_reg_clean(R_CC_SRC);
-    taintcheck_reg_clean(R_CC_DST);
-    taintcheck_update_eflags(CC_C);
+    taintcheck_update_eflags(CC_C, 1);
 #endif
     return CC_SRC;
 }
@@ -283,7 +287,7 @@ static int glue(compute_all_dec, SUFFIX)(void)
     of = ((CC_DST & DATA_MASK) == ((target_ulong)SIGN_MASK - 1)) << 11;
 #if TAINT_FLAGS
 	UPDATE_CC_FLAGS(cf | pf | af | zf | sf | of);
-    taintcheck_update_all_eflags();
+    taintcheck_update_all_eflags(3);
 #endif
     return cf | pf | af | zf | sf | of;
 }
@@ -300,7 +304,7 @@ static int glue(compute_all_shl, SUFFIX)(void)
     of = lshift(CC_SRC ^ CC_DST, 12 - DATA_BITS) & CC_O;
 #if TAINT_FLAGS
 	UPDATE_CC_FLAGS(cf | pf | af | zf | sf | of);
-    taintcheck_update_all_eflags();
+    taintcheck_update_all_eflags(3);
 #endif
     return cf | pf | af | zf | sf | of;
 }
@@ -309,7 +313,7 @@ static int glue(compute_c_shl, SUFFIX)(void)
 {
 #if TAINT_FLAGS
 	UPDATE_CF((CC_SRC >> (DATA_BITS - 1)) & CC_C);
-    taintcheck_update_eflags(CC_C);
+    taintcheck_update_eflags(CC_C, 1);
 #endif
     return (CC_SRC >> (DATA_BITS - 1)) & CC_C;
 }
@@ -319,7 +323,7 @@ static int glue(compute_c_sar, SUFFIX)(void)
 {
 #if TAINT_FLAGS
 	UPDATE_CF(CC_SRC & 1);
-    taintcheck_update_eflags(CC_C);
+    taintcheck_update_eflags(CC_C, 1);
 #endif
     return CC_SRC & 1;
 }
@@ -337,7 +341,7 @@ static int glue(compute_all_sar, SUFFIX)(void)
     of = lshift(CC_SRC ^ CC_DST, 12 - DATA_BITS) & CC_O; 
 #if TAINT_FLAGS
 	UPDATE_CC_FLAGS(cf | pf | af | zf | sf | of);
-    taintcheck_update_all_eflags();
+    taintcheck_update_all_eflags(3);
 #endif
     return cf | pf | af | zf | sf | of;
 }
@@ -349,7 +353,7 @@ static int glue(compute_c_mul, SUFFIX)(void)
     cf = (CC_SRC != 0);
 #if TAINT_FLAGS
 	UPDATE_CF(cf);
-    taintcheck_update_eflags(CC_C);
+    taintcheck_update_eflags(CC_C, 1);
 #endif
     return cf;
 }
@@ -368,7 +372,7 @@ static int glue(compute_all_mul, SUFFIX)(void)
     of = cf << 11;
 #if TAINT_FLAGS
 	UPDATE_CC_FLAGS(cf | pf | af | zf | sf | of);
-    taintcheck_update_all_eflags();
+    taintcheck_update_all_eflags(3);
 #endif
     return cf | pf | af | zf | sf | of;
 }
@@ -380,10 +384,6 @@ void OPPROTO glue(op_jb_sub, SUFFIX)(void)
     target_long src1, src2;
     src1 = CC_DST + CC_SRC;
     src2 = CC_SRC;
-#if TAINT_FLAGS
-	UPDATE_CF((DATA_TYPE)src1 < (DATA_TYPE)src2);
-    taintcheck_update_eflags(CC_C);
-#endif
 
     if ((DATA_TYPE)src1 < (DATA_TYPE)src2)
         GOTO_LABEL_PARAM(1);
@@ -392,10 +392,6 @@ void OPPROTO glue(op_jb_sub, SUFFIX)(void)
 
 void OPPROTO glue(op_jz_sub, SUFFIX)(void)
 {
-#if TAINT_FLAGS
-    UPDATE_SOME_FLAGS(CC_Z, ((DATA_TYPE)CC_DST == 0)? CC_Z : 0);
-    taintcheck_update_eflags(CC_Z);
-#endif
     if ((DATA_TYPE)CC_DST == 0)
         GOTO_LABEL_PARAM(1);
     FORCE_RET();
@@ -403,10 +399,6 @@ void OPPROTO glue(op_jz_sub, SUFFIX)(void)
 
 void OPPROTO glue(op_jnz_sub, SUFFIX)(void)
 {
-#if TAINT_FLAGS
-	UPDATE_SOME_FLAGS(CC_Z, ((DATA_TYPE)CC_DST == 0)? CC_Z : 0);
-    taintcheck_update_eflags(CC_Z);
-#endif
     if ((DATA_TYPE)CC_DST != 0)
         GOTO_LABEL_PARAM(1);
     FORCE_RET();
@@ -418,12 +410,6 @@ void OPPROTO glue(op_jbe_sub, SUFFIX)(void)
     src1 = CC_DST + CC_SRC;
     src2 = CC_SRC;
 
-#if TAINT_FLAGS
-	UPDATE_SOME_FLAGS(CC_C|CC_Z, (((DATA_TYPE)src1 == (DATA_TYPE)src2)? CC_Z : 0) |
-					 (((DATA_TYPE)src1 < (DATA_TYPE)src2)? CC_C : 0));
-    taintcheck_update_eflags(CC_C|CC_Z);
-#endif
-
     if ((DATA_TYPE)src1 <= (DATA_TYPE)src2)
         GOTO_LABEL_PARAM(1);
     FORCE_RET();
@@ -431,10 +417,6 @@ void OPPROTO glue(op_jbe_sub, SUFFIX)(void)
 
 void OPPROTO glue(op_js_sub, SUFFIX)(void)
 {
-#if TAINT_FLAGS
-	UPDATE_SOME_FLAGS(CC_S, (CC_DST & SIGN_MASK)? CC_S : 0);
-    taintcheck_update_eflags(CC_S);
-#endif
     if (CC_DST & SIGN_MASK)
         GOTO_LABEL_PARAM(1);
     FORCE_RET();
@@ -445,12 +427,6 @@ void OPPROTO glue(op_jl_sub, SUFFIX)(void)
     target_long src1, src2;
     src1 = CC_DST + CC_SRC;
     src2 = CC_SRC;
-#if TAINT_FLAGS
-    int sf = lshift(CC_DST, 8 - DATA_BITS) & 0x80;
-    int of = lshift((src1 ^ src2) & (src1 ^ CC_DST), 12 - DATA_BITS) & CC_O;
-    UPDATE_SOME_FLAGS(CC_S | CC_O, sf | of);
-    taintcheck_update_eflags(CC_S | CC_O);
-#endif
 
     if ((DATA_STYPE)src1 < (DATA_STYPE)src2)
         GOTO_LABEL_PARAM(1);
@@ -462,14 +438,6 @@ void OPPROTO glue(op_jle_sub, SUFFIX)(void)
     target_long src1, src2;
     src1 = CC_DST + CC_SRC;
     src2 = CC_SRC;
-
-#if TAINT_FLAGS
-    int sf = lshift(CC_DST, 8 - DATA_BITS) & 0x80;
-    int of = lshift((src1 ^ src2) & (src1 ^ CC_DST), 12 - DATA_BITS) & CC_O;
-    int zf =  ((DATA_STYPE)src1 == (DATA_STYPE)src2)? CC_Z: 0;
-    UPDATE_SOME_FLAGS(CC_S | CC_O | CC_Z, sf | of | zf);
-    taintcheck_update_eflags(CC_S | CC_O | CC_Z);
-#endif
 
     if ((DATA_STYPE)src1 <= (DATA_STYPE)src2)
         GOTO_LABEL_PARAM(1);
@@ -527,27 +495,11 @@ void OPPROTO glue(op_setb_T0_sub, SUFFIX)(void)
     src2 = CC_SRC;
 
     T0 = ((DATA_TYPE)src1 < (DATA_TYPE)src2);
-#if TAINT_ENABLED
-	taintcheck_fn2regs(R_CC_SRC, R_CC_DST, R_T0, 4);
-#endif
-#if TAINT_FLAGS
-    UPDATE_CF(T0? CC_C:0);
-    //FIXME
-#endif
-
 }
 
 void OPPROTO glue(op_setz_T0_sub, SUFFIX)(void)
 {
     T0 = ((DATA_TYPE)CC_DST == 0);
-#if TAINT_ENABLED
-    taintcheck_reg2reg(R_CC_DST, R_T0, 4);
-#endif
-#if TAINT_FLAGS
-	UPDATE_SOME_FLAGS(CC_Z, T0? CC_Z:0);
-    //FIXME
-#endif
-
 }
 
 void OPPROTO glue(op_setbe_T0_sub, SUFFIX)(void)
@@ -557,28 +509,11 @@ void OPPROTO glue(op_setbe_T0_sub, SUFFIX)(void)
     src2 = CC_SRC;
 
     T0 = ((DATA_TYPE)src1 <= (DATA_TYPE)src2);
-#if TAINT_ENABLED
-	taintcheck_fn2regs(R_CC_SRC, R_CC_DST, R_T0, 4);
-#endif
-#if TAINT_FLAGS
-    int zf = ((DATA_TYPE)src1 == (DATA_TYPE)src2)? CC_Z : 0;
-    int cf = ((DATA_TYPE)src1 < (DATA_TYPE)src2)? CC_C : 0;
-    UPDATE_SOME_FLAGS(CC_Z | CC_C, zf | cf);
-    taintcheck_update_eflags(CC_Z | CC_C);
-#endif
-
 }
 
 void OPPROTO glue(op_sets_T0_sub, SUFFIX)(void)
 {
     T0 = lshift(CC_DST, -(DATA_BITS - 1)) & 1;
-#if TAINT_ENABLED
-    taintcheck_reg2reg(R_CC_DST, R_T0, 4);
-#endif
-#if TAINT_FLAGS
-	UPDATE_SOME_FLAGS(CC_S, T0? CC_S : 0);
-    //FIXME
-#endif
 }
 
 void OPPROTO glue(op_setl_T0_sub, SUFFIX)(void)
@@ -588,15 +523,6 @@ void OPPROTO glue(op_setl_T0_sub, SUFFIX)(void)
     src2 = CC_SRC;
 
     T0 = ((DATA_STYPE)src1 < (DATA_STYPE)src2);
-#if TAINT_ENABLED
-	taintcheck_fn2regs(R_CC_SRC, R_CC_DST, R_T0, 4);
-#endif
-#if TAINT_FLAGS
-    int sf = lshift(CC_DST, 8 - DATA_BITS) & 0x80;
-    int of = lshift((src1 ^ src2) & (src1 ^ CC_DST), 12 - DATA_BITS) & CC_O;
-    UPDATE_SOME_FLAGS(CC_S | CC_O, sf | of);
-    taintcheck_update_eflags(CC_S | CC_O);
-#endif
 }
 
 void OPPROTO glue(op_setle_T0_sub, SUFFIX)(void)
@@ -606,16 +532,6 @@ void OPPROTO glue(op_setle_T0_sub, SUFFIX)(void)
     src2 = CC_SRC;
 
     T0 = ((DATA_STYPE)src1 <= (DATA_STYPE)src2);
-#if TAINT_ENABLED
-	taintcheck_fn2regs(R_CC_SRC, R_CC_DST, R_T0, 4);
-#endif
-#if TAINT_FLAGS
-    int zf = ((DATA_TYPE)CC_DST == 0) << 6;
-    int sf = lshift(CC_DST, 8 - DATA_BITS) & 0x80;
-    int of = lshift((src1 ^ src2) & (src1 ^ CC_DST), 12 - DATA_BITS) & CC_O;
-    UPDATE_SOME_FLAGS(CC_S | CC_O | CC_Z, sf | of | zf);
-    taintcheck_update_eflags(CC_S | CC_O | CC_Z);
-#endif
 }
 
 /* shifts */

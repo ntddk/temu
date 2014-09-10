@@ -1,0 +1,126 @@
+.TH ILS 1 
+.ad
+.fi
+.SH NAME
+ils
+\-
+list inode information
+.SH SYNOPSIS
+.na
+.nf
+.ad
+.fi
+\fBils\fR [\fB-eOmrvV\fR] [\fB-f \fIfstype\fR] [\fB-s \fIseconds\fR] [-i imgtype] [-o imgoffset]
+\fIimage [images]\fR [\fIstart-stop\fR]
+
+\fBils\fR [\fB-aAlLvVzZ\fR] [\fB-f \fIfstype\fR] [\fB-s \fIseconds\fR] [-i imgtype] [-o imgoffset]
+\fIimage [images]\fR [\fIstart-stop\fR]
+.SH DESCRIPTION
+.ad
+.fi
+\fBils\fR opens the named \fIimage(s)\fR and lists inode information.
+By default, \fBils\fR lists only the inodes of removed files.
+
+Arguments:
+.IP \fB-e\fR
+List every inode in the file system.
+.IP "\fB-f\fI fstype\fR"
+Specifies the file system type.  Use the -? argument to display
+all supported types.
+If not given, the default type for the platform is used.
+.IP "\fB-s\fI seconds\fR"
+The time skew of the original system in seconds.  For example, if the
+original system was 100 seconds slow, this value would be -100. 
+.IP \fB-m\fR
+Display the inode details in the format that the mactime program reads
+(replaces the ils2mac script from TCT)
+.IP \fB-O\fR
+List only inodes of removed files that are still open or executing.
+This option is short-hand notation for \fB-aL\fR
+"(see the \fBfine controls\fR section below). (this used to be -o).
+.IP \fB-r\fR
+(default) List only inodes of removed files. This option is short-hand notation
+for \fB-LZ\fR
+(see the \fBfine controls\fR section below).
+.IP "-i imgtype"
+Identify the type of image file, such as raw or split.  Raw is the default.
+.IP "-o imgoffset"
+The sector offset where the file system starts in the image.  Non-512 byte
+sectors can be specified using '@' (32@2048).
+.IP \fB-v\fR
+Turn on verbose mode, output to stderr.
+.IP \fB-V\fR
+Display Version.
+.IP "image [images]"
+One (or more if split) disk or partition images whose format is given with '-i'.
+.IP "\fIstart-stop\fR"
+Examine the specified inode number or number range. 
+.PP
+Fine controls:
+.IP \fB-a\fR
+List only allocated inodes: these belong to files with at least one
+directory entry in the file system, and to removed files that
+are still open or executing.
+.IP \fB-A\fR
+List only unallocated inodes: these belong to files that no longer
+exist.
+.IP \fB-l\fR
+List only inodes with at least one hard link. These belong to files
+with at least one directory entry in the file system.
+.IP \fB-L\fR
+List only inodes without any hard links. These belong to files that no
+longer exist, and to removed files that are still open or executing.
+.IP \fB-z\fR
+List only inodes with zero status change time. Presumably, these
+inodes were never used.
+.IP \fB-Z\fR
+List only inodes with non-zero status change time. Presumably, these
+belong to files that still exist, or that existed in the past.
+.PP
+The output format is in time machine format, as described in
+tm-format(5). The output begins with a two-line header that
+describes the data origin, and is followed by a one-line header
+that lists the names of the data attributes that make up the
+remainder of the output:
+.IP \fBst_ino\fR
+The inode number.
+.IP \fBst_alloc\fR
+Allocation status: `a' for allocated inode, `f' for free inode.
+.IP \fBst_uid\fR
+Owner user ID.
+.IP \fBst_gid\fR
+Owner group ID.
+.IP \fBst_mtime\fR
+UNIX time (seconds) of last file modification.
+.IP \fBst_atime\fR
+UNIX time (seconds) of last file access.
+.IP \fBst_ctime\fR
+UNIX time (seconds) of last inode status change.
+.IP \fBst_dtime\fR
+UNIX time (seconds) of file deletion (LINUX only).
+.IP \fBst_mode\fR
+File type and permissions (octal).
+.IP \fBst_nlink\fR
+Number of hard links.
+.IP \fBst_size\fR
+File size in bytes.
+.IP \fBst_block0,st_block1\fR
+The first two entries in the direct block address list.
+.SH SEE ALSO
+.na
+.nf
+mactime(1), mtime, atime, ctime reporter
+tm-format(5), time machine data format
+.SH LICENSE
+.na
+.nf
+This software is distributed under the IBM Public License.
+.SH HISTORY
+First appeared in The Coroners Toolkit (TCT) 1.0.
+.SH AUTHOR(S)
+.na
+.nf
+Wietse Venema
+IBM T.J. Watson Research
+P.O. Box 704
+Yorktown Heights, NY 10598, USA

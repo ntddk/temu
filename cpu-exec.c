@@ -668,6 +668,15 @@ int cpu_exec(CPUState *env1)
                               : /* no outputs */
                               : "r" (gen_func)
                               : "r1", "r2", "r3", "r8", "r9", "r10", "r12", "r14");
+#elif defined(TARGET_X86_64) && defined(__i386__)
+                asm volatile ("push %%ebx\n"
+                              "push %%esi\n"
+                              "push %%edi\n"
+                              "call *%0\n"
+                              "pop %%edi\n"
+                              "pop %%esi\n"
+                              "pop %%ebx\n"
+                              : : "r" (gen_func) : "ebx", "esi", "edi");
 #elif defined(__ia64)
 		struct fptr {
 			void *ip;

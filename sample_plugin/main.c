@@ -1,18 +1,13 @@
 /*
-TEMU is Copyright (C) 2006-2009, BitBlaze Team.
+TEMU is Copyright (C) 2006-2010, BitBlaze Team.
 
-TEMU is based on QEMU, a whole-system emulator. You can redistribute
-and modify it under the terms of the GNU LGPL, version 2.1 or later,
-but it is made available WITHOUT ANY WARRANTY. See the top-level
-README file for more details.
-
-For more information about TEMU and other BitBlaze software, see our
-web site at: http://bitblaze.cs.berkeley.edu/
+You can redistribute and modify it under the terms of the GNU LGPL,
+version 2.1 or later, but it is made available WITHOUT ANY WARRANTY.
 */
 
 /********************************************************************
  * @file sample_plugin.c
- * @author: Heng Yin <hyin@cs.berkeley.edu>
+ * @author: Heng Yin
  */
 
 #include <ctype.h>
@@ -135,7 +130,8 @@ static int my_block_begin()
   
   TEMU_read_register(eip_reg, &eip);
   TEMU_read_register(cr3_reg, &cr3);
-  mi = locate_module(eip, cr3, current_proc); 
+  mi = locate_module(eip, cr3, current_proc);
+  strcpy(current_mod, mi? mi->name: "<unknown>"); 
 
   should_monitor = (strcasecmp(current_proc, monitored_proc) == 0);
   if (!should_monitor)

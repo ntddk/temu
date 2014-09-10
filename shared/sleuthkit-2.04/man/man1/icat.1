@@ -1,0 +1,63 @@
+.TH ICAT 1 
+.ad
+.fi
+.SH NAME
+icat
+\-
+copy files by inode number
+.SH SYNOPSIS
+.na
+.nf
+.ad
+.fi
+\fBicat\fR [\fB-hrsvV\fR] [\fB-f \fIfstype\fR] [-i imgtype] [-o imgoffset]
+\fIimage [images]\fR \fIinode\fR 
+.SH DESCRIPTION
+.ad
+.fi
+\fBicat\fR opens the named \fIimage(s)\fR and copies the file
+with the specified \fIinode\fR number to standard output.
+
+Arguments:
+.IP "\fB-f \fIfstype\fR"
+Specifies the file system type.  Use the -? argument to view
+all supported types.  
+If not given, the default type for the platform is used.
+.IP \fB-h\fR
+Skip over holes in sparse files, so that absolute address information
+is lost. This option saves space when copying sparse files.
+.IP \fB-r\fR
+Use file recovery techniques if the file is deleted.  
+.IP \fB-s\fR
+Include the slack space in the output.
+.IP "-i imgtype"
+Identify the type of image file, such as raw or split.  Raw is the default.
+.IP "-o imgoffset"
+The sector offset where the file system starts in the image.  Non-512 byte
+sectors can be specified using '@' (32@2048).
+.IP \fB-v\fR
+Enable verbose mode, output to stderr.
+.IP \fB-V\fR
+Display version
+.IP "image [images]"
+One (or more if split) disk or partition images whose format is given with '-i'.
+.IP \fIinode\fR
+Inode number. \fBicat\fR concatenates the contents of all specified
+files.
+.SH LICENSE
+.na
+.nf
+This software is distributed under the IBM Public License.
+.SH HISTORY
+First appeared in The Coroners Toolkit (TCT) 1.0 and is now
+in The Sleuth Kit.
+.SH AUTHOR(S)
+.na
+.nf
+Wietse Venema
+IBM T.J. Watson Research
+P.O. Box 704
+Yorktown Heights, NY 10598, USA
+
+This version is maintained by Brian Carrier (carrier@sleuthkit.org).
+

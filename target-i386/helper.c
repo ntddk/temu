@@ -3667,8 +3667,15 @@ void helper_fxrstor(target_ulong ptr, int data64)
         nb_xmm_regs = 8 << data64;
         addr = ptr + 0xa0;
         for(i = 0; i < nb_xmm_regs; i++) {
+#if defined(__i386__) && __GNUC__ >= 4
+            env->xmm_regs[i].XMM_L(0) = ldl(addr);
+            env->xmm_regs[i].XMM_L(1) = ldl(addr + 4);
+            env->xmm_regs[i].XMM_L(2) = ldl(addr + 8);
+            env->xmm_regs[i].XMM_L(3) = ldl(addr + 12);
+#else
             env->xmm_regs[i].XMM_Q(0) = ldq(addr);
             env->xmm_regs[i].XMM_Q(1) = ldq(addr + 8);
+#endif
             addr += 16;
         }
     }

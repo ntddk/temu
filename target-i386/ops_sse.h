@@ -34,6 +34,12 @@
 #define Q(n) XMM_Q(n)
 #define SUFFIX _xmm
 #endif
+#if defined(__i386__) && __GNUC__ >= 4
+#define RegCopy(d, s) __builtin_memcpy(&(d), &(s), sizeof(d))
+#endif
+#ifndef RegCopy
+#define RegCopy(d, s) d = s
+#endif
 
 void OPPROTO glue(op_psrlw, SUFFIX)(void)
 {
@@ -592,7 +598,7 @@ void OPPROTO glue(op_pshufw, SUFFIX) (void)
     r.W(1) = s->W((order >> 2) & 3);
     r.W(2) = s->W((order >> 4) & 3);
     r.W(3) = s->W((order >> 6) & 3);
-    *d = r;
+    RegCopy(*d, r);
 }
 #else
 void OPPROTO op_shufps(void)

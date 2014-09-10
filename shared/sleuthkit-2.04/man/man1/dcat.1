@@ -1,0 +1,84 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH DCAT 1 "JAN 2005" "User Manuals"
+.SH NAME
+dcat \- Display the contents of disk "chunks" from a forensic image
+.SH SYNOPSIS
+.B dcat [-ahswvV] [-f fstype] [-u unit_size] [-i imgtype] [-o imgoffset] image [images] unit_addr [num]
+
+.SH DESCRIPTION
+.B dcat
+displays 
+.B num 
+data units (default is one) starting at the unit address
+.B unit_addr
+from
+.B image
+to stdout in different formats (default is raw).
+The image should be created using
+.BR dd(1).
+
+The arguments are as follows:
+.IP -a
+Display the contents in ASCII
+.IP -f fstype
+Specify image as a specific file type.  If 'swap' is given
+here, the image will be displayed in pages of size 4096 bytes.  If 'raw'
+is given, then 512-bytes is used as the default size.  The '-u' flag
+can change the default size.  Use the
+-? argument to display supported types.
+If not given, the default type for the platform is used.
+.IP -h  
+Display the contents in hexdump 
+.IP -s
+Display statistics on the image (unit size, file block size,  \
+and number of fragments).
+.IP -u unit_size
+Specify the size of the default data unit for raw, dls, and swap 
+images.
+.IP "-i imgtype"
+Identify the type of image file, such as raw or split.  Raw is the default.
+.IP "-o imgoffset"
+The sector offset where the file system starts in the image.  Non-512 byte
+sectors can be specified using '@' (32@2048).
+.IP -v
+Verbose output to stderr.
+.IP -V
+Display version.
+.IP -w  
+Display the contents in an HTML table format.  
+.IP "image [images]"
+One (or more if split) disk or partition images whose format is given with '-i'.
+.IP unit_addr
+Address of the disk unit to display.  The size of a unit on this 
+file system can be determined using the -s option.  
+.IP num 
+Number of data units to display.
+
+.PP
+The basic functionality of 
+.B dcat
+can also be achieved using
+.BR dd(1).
+To determine which inode has allocated
+a given unit, the 
+.BR ifind(1)
+command can be used.
+
+.SH EXAMPLES
+# dcat \-hw image 264 4
+
+or 
+
+# dcat \-hw image 264 
+
+.SH "SEE ALSO"
+.BR dd (1),
+.BR ifind (1)
+
+.SH HISTORY
+.BR "dcat" " first appeared in " "TCTUTILs" " v1.0 as " "bcat."
+
+.SH AUTHOR
+Brian Carrier <carrier@sleuthkit.org>

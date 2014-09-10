@@ -369,7 +369,13 @@ static inline void stl_le_p(void *ptr, int v)
 
 static inline void stq_le_p(void *ptr, uint64_t v)
 {
+#if defined(__i386__) && __GNUC__ >= 4
+    const union { uint64_t v; uint32_t p[2]; } x = { .v = v };
+    ((uint32_t *)ptr)[0] = x.p[0];
+    ((uint32_t *)ptr)[1] = x.p[1];
+#else
     *(uint64_t *)ptr = v;
+#endif
 }
 
 /* float access */

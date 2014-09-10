@@ -1,0 +1,31 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH IMG_STAT 1 "JAN 2005" "User Manuals"
+.SH NAME
+img_stat \- Display details of an image file
+.SH SYNOPSIS
+.B img_stat [-i imgtype] [-tvV] 
+.I image [images] 
+.SH DESCRIPTION
+.B img_stat
+displays the details associated with an image file.  The output of this
+command is image format specific.  At a minimum, the size will be given 
+and the byte range of each file will be given for split image formats.
+
+The options are as follows:
+.IP "-t type"
+Print the image type only. 
+.IP "-i imgtype"
+Identify the type of image file, such as raw or split.  Raw is the default.
+.IP -v
+Verbose output of debugging statements to stderr
+.IP -V
+Display version
+.IP "image [images]"
+One (or more if split) disk or partition images whose format is given with '-i'.
+
+.SH HISTORY
+.BR "img_stat" " first appeared in " "TSK" " v2.0."
+.SH AUTHOR
+Brian Carrier <carrier@sleuthkit.org>

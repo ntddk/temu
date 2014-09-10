@@ -82,6 +82,10 @@ endif
 else
 QEMU_SYSTEM=qemu-fast
 endif
+ifeq ($(TARGET_ARCH), x86_64)
+# XXX globally save %ebx, %esi, %edi on entry to generated function
+OP_CFLAGS+= -fcall-used-ebx -fcall-used-esi -fcall-used-edi
+endif
 
 ifdef CONFIG_USER_ONLY
 PROGS=$(QEMU_USER)
@@ -117,7 +121,7 @@ OP_CFLAGS+=$(call cc-option, -fno-section-anchors, "")
 
 ifeq ($(ARCH),i386)
 HELPER_CFLAGS+=-fomit-frame-pointer
-OP_CFLAGS+=-mpreferred-stack-boundary=2 -fomit-frame-pointer
+OP_CFLAGS+=-fomit-frame-pointer
 ifdef TARGET_GPROF
 USE_I386_LD=y
 endif

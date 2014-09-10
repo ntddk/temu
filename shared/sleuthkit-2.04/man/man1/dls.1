@@ -1,0 +1,59 @@
+.TH DLS 1 "JAN 2005" "User Manuals"
+.ad
+.fi
+.SH NAME
+dls 
+\-
+disk data recovery
+.SH SYNOPSIS
+.na
+.nf
+.ad
+.fi
+\fBdls\fR [\fB-belsvV\fR] [\fB-f \fIfstype\fR] [\fB-i \fIimgtype\fR] [\fB-o \fIimgoffset\fR]
+\fIimage\fR [\fIimages\fR] [\fIstart-stop\fR]
+.SH DESCRIPTION
+.ad
+.fi
+\fBdls\fR opens the named \fIimage(s)\fR and copies data blocks (disk
+units).  By default, \fBdls\fR copies unallocated data blocks
+(addressable disk units) only.  \fBdls\fR was called \fBunrm\fR in
+TCT.  
+
+Arguments:
+.IP \fB-b\fR
+With file systems that have logical blocks that consist of fragments,
+don't insert null-byte padding to preserve logical block alignment
+in the output.
+This option is a no-op with the LINUX ext2fs file system, where
+logical blocks and fragments have the same size.
+.IP \fB-e\fR
+Copy every block. The output should be similar to dd(1).
+.IP "\fB-f\fI fstype\fR"
+Specifies the file system type.   Use the -? argument for a list
+of all supported types.  If not given, the default type for the
+platform is used.  
+.IP "-i imgtype"
+Identify the type of image file, such as raw or split.  Raw is the default.
+.IP "-o imgoffset"
+The sector offset where the file system starts in the image.  Non-512 byte
+sectors can be specified using '@' (32@2048).
+.IP \fB-l\fR
+List the data information in time machine format.
+.IP \fB-s\fR
+Copy only the slack space of the image.
+.IP \fB-v\fR
+Turn on verbose mode, output to stderr.
+.IP \fB-V\fR
+Display version.
+.IP "image [images]"
+One (or more if split) disk or partition images whose format is given with '-i'.
+.IP "\fIstart-stop\fR ..."
+Examine the specified block number or number range. 
+.SH LICENSE
+.na
+.nf
+This software is distributed under the IBM Public License.
+.SH HISTORY
+First appeared in The Coroners Toolkit (TCT) 1.0 (Wietse Venema).
+Now maintained by Brian Carrier <carrier@sleuthkit.org>.

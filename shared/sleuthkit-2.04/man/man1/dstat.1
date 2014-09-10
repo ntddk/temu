@@ -1,0 +1,40 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH DSTAT 1 "JAN 2005" "User Manuals"
+.SH NAME
+dstat \- Display details of a data structure (i.e. block or sector)
+.SH SYNOPSIS
+.B dstat [-f
+.I fstype 
+.B ] [-i imgtype] [-o imgoffset] [-vV] 
+.I image [images] addr
+.SH DESCRIPTION
+.B dstat
+displays the allocation status of the given data address.
+
+The options are as follows:
+.IP "-f fstype"
+Specify the file system type.  Use the -? option for supported types.
+If not given, the default type for the platform is used.
+.IP "-i imgtype"
+Identify the type of image file, such as raw or split.  Raw is the default.
+.IP "-o imgoffset"
+The sector offset where the file system starts in the image.  Non-512 byte
+sectors can be specified using '@' (32@2048).
+.IP -v
+Verbose output of debugging statements to stderr
+.IP -V
+Display version
+.IP "image [images]"
+One (or more if split) disk or partition images whose format is given with '-i'.
+.IP addr
+Address to display stats on.  This is a fragment for UNIX file systems or
+a sector for FAT.  
+
+.SH "SEE ALSO"
+.BR dd (1),
+.SH HISTORY
+.BR "dstat" " first appeared in " "TASK" " v1.0."
+.SH AUTHOR
+Brian Carrier <carrier@sleuthkit.org>

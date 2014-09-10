@@ -1,0 +1,48 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH JLS 1 "JAN 2005" "User Manuals"
+.SH NAME
+jls \- List the contents of a file system journal
+.SH SYNOPSIS
+.B jls [-f
+.I fstype
+.B ] [-vV]  [-i imgtype] [-o imgoffset]
+.I image [images] [inode] 
+
+.SH DESCRIPTION
+.B jls
+lists the records and entries in a file system journal.  If inode is given,
+then it will look there for a journal.  Otherwise, it will use the
+default location.  The output lists the journal block number and a
+description.
+
+The options are as follows:
+.IP "-f ftype"
+Specify the file system type.  Use -? to get a list of supported types.
+.IP "-i imgtype"
+Identify the type of image file, such as raw or split.  Raw is the default.
+.IP "-o imgoffset"
+The sector offset where the file system starts in the image.  Non-512 byte
+sectors can be specified using '@' (32@2048).
+.IP -V
+Display version
+.IP -v
+verbose output
+.IP "image [images]"
+One (or more if split) disk or partition images whose format is given with '-i'.
+.IP [inode]
+The inode where the file system journal can be found. 
+
+.SH "EXAMPLES"
+
+jls -f linux-ext3 img.dd
+
+.SH SEE ALSO
+dd, jcat
+
+.SH HISTORY
+.BR "jls" " first appeared in " "The Sleuth Kit" " v1.73."
+
+.SH AUTHOR
+Brian Carrier <carrier@sleuthkit.org>

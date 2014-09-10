@@ -1,4 +1,12 @@
 /*
+TEMU is Copyright (C) 2006-2010, BitBlaze Team.
+
+TEMU is based on QEMU, a whole-system emulator. You can redistribute
+and modify it under the terms of the GNU LGPL, version 2.1 or later,
+but it is made available WITHOUT ANY WARRANTY.
+*/
+
+/*
  * QEMU monitor
  *
  * Copyright (c) 2003-2004 Fabrice Bellard
@@ -832,6 +840,7 @@ static const KeyDef key_defs[] = {
     { 0x25, "k" },
     { 0x26, "l" },
 
+	{ 0x2b, "bkslash"}, 
     { 0x2c, "z" },
     { 0x2d, "x" },
     { 0x2e, "c" },

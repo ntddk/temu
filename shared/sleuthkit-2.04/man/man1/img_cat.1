@@ -1,0 +1,30 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH IMG_CAT 1 "MAY 2006" "User Manuals"
+.SH NAME
+img_cat \- Output contents of an image file.
+.SH SYNOPSIS
+.B img_cat [-i imgtype] [-vV] 
+.I image [images] 
+.SH DESCRIPTION
+.B img_cat
+outputs the contents of an image file.  Image files that are not raw will have embedded
+data and metadata.  img_cat will output only the metadata.  This allows you to convert 
+an embedded format to raw or to calculate the MD5 hash of the data by piping the output to
+the appropriate tool. 
+
+The options are as follows:
+.IP "-i imgtype"
+Identify the type of image file, such as raw, split, or aff.  
+.IP -v
+Verbose output of debugging statements to stderr
+.IP -V
+Display version
+.IP "image [images]"
+One (or more if split) disk or partition images whose format is given with '-i'.
+
+.SH HISTORY
+.BR "img_cat" " first appeared in " "TSK" " v2.04."
+.SH AUTHOR
+Brian Carrier <carrier@sleuthkit.org>

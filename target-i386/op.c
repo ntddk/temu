@@ -1,4 +1,12 @@
 /*
+TEMU is Copyright (C) 2006-2010, BitBlaze Team.
+
+TEMU is based on QEMU, a whole-system emulator. You can redistribute
+and modify it under the terms of the GNU LGPL, version 2.1 or later,
+but it is made available WITHOUT ANY WARRANTY.
+*/
+
+/*
  *  i386 micro operations
  *
  *  Copyright (c) 2003 Fabrice Bellard
@@ -334,16 +342,25 @@ void OPPROTO op_xorl_T0_T1(void)
 void OPPROTO op_negl_T0(void)
 {
     T0 = -T0;
+#if TAINT_ENABLED
+    taintcheck_fn1reg(R_T0, 4);
+#endif
 }
 
 void OPPROTO op_incl_T0(void)
 {
     T0++;
+#if TAINT_ENABLED
+    taintcheck_fn1reg(R_T0, 4);
+#endif
 }
 
 void OPPROTO op_decl_T0(void)
 {
     T0--;
+#if TAINT_ENABLED
+    taintcheck_fn1reg(R_T0, 4);
+#endif
 }
 
 void OPPROTO op_notl_T0(void)
@@ -2023,7 +2040,7 @@ void OPPROTO op_salc(void)
 static int compute_all_eflags(void)
 {
 #if TAINT_FLAGS
-    taintcheck_update_all_eflags(); //FIXME!!
+    taintcheck_update_all_eflags(1); 
 #endif
     return CC_SRC;
 }
@@ -2031,7 +2048,7 @@ static int compute_all_eflags(void)
 static int compute_c_eflags(void)
 {
 #if TAINT_FLAGS
-    taintcheck_update_eflags(CC_C); //FIXME!!
+    taintcheck_update_eflags(CC_C, 1); 
 #endif
     return CC_SRC & CC_C;
 }

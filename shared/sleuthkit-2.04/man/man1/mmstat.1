@@ -1,0 +1,40 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH MMSTAT 1 "JAN 2006" "User Manuals"
+.SH NAME
+mmstat \- Display details about the media management system (partition tables)
+.SH SYNOPSIS
+.B mmstat [-t
+.I mmtype 
+.B ] [-o
+.I offset
+.B ] [ -i
+.I imgtype
+.B ] [-vV] 
+.I image [images]
+.SH DESCRIPTION
+.B mms
+displays the general details of the media management systems, which include partition
+tables and disk labels.  Mainly, the type is given.
+
+The options are as follows:
+.IP "-t mmtype"
+Specify the media management type.  Use the -? option for supported types.
+.IP "-o offset"
+Specify the offset into the image where the volume containing the
+partition system starts.  The relative offset of the partition system
+will be added to this value.
+.IP "-i imgtype"
+Identify the type of image file, such as raw or split.  Raw is the default.
+.IP -v
+Verbose output of debugging statements to stderr
+.IP -V
+Display version
+.IP "image [images]"
+One (or more if split) disk images whose format is given with '-i'.
+
+.SH HISTORY
+.BR "mmstat" " first appeared in " "The Sleuth Kit" " v2.00."
+.SH AUTHOR
+Brian Carrier <carrier@sleuthkit.org>

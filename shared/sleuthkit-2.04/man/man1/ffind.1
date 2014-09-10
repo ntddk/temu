@@ -1,0 +1,61 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH FFIND 1 "JAN 2005" "User Manuals"
+.SH NAME
+ffind \- Find the file or directory name that is using a given inode
+.SH SYNOPSIS
+.B ffind [-aduvV] [-f fstype] [-i imgtype] [-o imgoffset]
+.I image inode
+.SH DESCRIPTION
+.B ffind
+finds the names of files or directories that use 
+.I inode
+on
+.I image.
+By default it only will only return the name it finds.  This will
+also show the names of deleted file names in some systems such 
+as Linux and OpenBSD.   
+
+The arguments are as follows:
+.IP "image [images]"
+One (or more if split) disk or partition images whose format is given with '-i'.
+.IP inode
+Integer of inode to find.
+
+The optional arguments are:
+.IP -a
+Find all occurrences of inode.
+.IP -d
+Find deleted entries only.
+.IP "-f fstype"
+Identify the File System type of the image.  Use the -? argument for a
+list of supported file system types.
+If not given, the default type for the platform is used.
+.IP -u
+Find undeleted entries only.
+.IP "-i imgtype"
+Identify the type of image file, such as raw or split.  Raw is the default.
+.IP "-o imgoffset"
+The sector offset where the file system starts in the image.  Non-512 byte
+sectors can be specified using '@' (32@2048).
+.IP -v
+Verbose output to stderr.
+.IP -V
+Display version.
+
+.PP
+This program searches all directory entries looking for the
+given inode.  This is useful when an inode has been identified
+from a disk unit address using 
+.BR find_inode(1).
+
+.SH EXAMPLE
+# ffind -a image 212
+.SH "SEE ALSO"
+.BR dd (1),
+.BR ifind (1)
+.SH HISTORY
+.BR "ffind" " first appeared in " "TCTUTILs" " v1.0 as " "find_file."
+.SH AUTHOR
+Brian Carrier <carrier@sleuthkit.org>

@@ -317,14 +317,15 @@ do {\
 
 #elif defined(__i386__) && defined(USE_DIRECT_JUMP)
 
-/* we patch the jump instruction directly */
+/* we patch the jump instruction directly.  Use sti in place of the actual
+   jmp instruction so that dyngen can patch in the correct result.  */
 #define GOTO_TB(opname, tbparam, n)\
 do {\
     asm volatile (".section .data\n"\
 		  ASM_OP_LABEL_NAME(n, opname) ":\n"\
 		  ".long 1f\n"\
 		  ASM_PREVIOUS_SECTION \
-                  "jmp " ASM_NAME(__op_jmp) #n "\n"\
+                  "sti;.long " ASM_NAME(__op_jmp) #n " - 1f\n"\
 		  "1:\n");\
 } while (0)
 

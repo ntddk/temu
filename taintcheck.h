@@ -1,17 +1,13 @@
 /*
-TEMU is Copyright (C) 2006-2009, BitBlaze Team.
+TEMU is Copyright (C) 2006-2010, BitBlaze Team.
 
 TEMU is based on QEMU, a whole-system emulator. You can redistribute
 and modify it under the terms of the GNU LGPL, version 2.1 or later,
-but it is made available WITHOUT ANY WARRANTY. See the top-level
-README file for more details.
-
-For more information about TEMU and other BitBlaze software, see our
-web site at: http://bitblaze.cs.berkeley.edu/
+but it is made available WITHOUT ANY WARRANTY.
 */
 
 /// @file taintcheck.h
-/// @author: Heng Yin <hyin@ece.cmu.edu>
+/// @author: Heng Yin
 /// \defgroup taintcheck taintcheck: Dynamic Taint Analysis Engine
 
 #ifndef _TAINTCHECK_H_INCLUDED_
@@ -195,7 +191,7 @@ uint32_t taintcheck_sidt(void);
 void taintcheck_update_cr3();
 
 #if TAINT_FLAGS
-void taintcheck_update_eflags(uint32_t mask) __attribute__((fastcall));
+void taintcheck_update_eflags(uint32_t mask, int which) __attribute__((fastcall));
 
 #ifndef CPU_I386_H //copy from cpu.h
 #define CC_C   	0x0001
@@ -206,9 +202,9 @@ void taintcheck_update_eflags(uint32_t mask) __attribute__((fastcall));
 #define CC_O    0x0800
 #endif
 
-static inline void taintcheck_update_all_eflags() 
+static inline void taintcheck_update_all_eflags(int which) 
 {
-  taintcheck_update_eflags( CC_C|CC_P|CC_A|CC_Z|CC_S|CC_O);
+  taintcheck_update_eflags( CC_C|CC_P|CC_A|CC_Z|CC_S|CC_O, which);
 }
 
 void taintcheck_reg2flag(int regidx, int size, uint32_t mask) 

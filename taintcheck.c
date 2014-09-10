@@ -1,13 +1,9 @@
 /*
-TEMU is Copyright (C) 2006-2009, BitBlaze Team.
+TEMU is Copyright (C) 2006-2010, BitBlaze Team.
 
 TEMU is based on QEMU, a whole-system emulator. You can redistribute
 and modify it under the terms of the GNU LGPL, version 2.1 or later,
-but it is made available WITHOUT ANY WARRANTY. See the top-level
-README file for more details.
-
-For more information about TEMU and other BitBlaze software, see our
-web site at: http://bitblaze.cs.berkeley.edu/
+but it is made available WITHOUT ANY WARRANTY.
 */
 
 /********************************************************************
@@ -698,17 +694,19 @@ taintcheck_fn2regs(int sreg1, int sreg2, int dreg, int size)        //size<=4
 
 #if TAINT_FLAGS
 
+
+//which=1 means cc_src, which=2 means cc_dst, which=3 means both
 void __attribute__((fastcall)) 
-taintcheck_update_eflags(uint32_t mask)
+taintcheck_update_eflags(uint32_t mask, int which) 
 {
 #ifndef NO_PROPAGATE
   if(__builtin_expect(!TEMU_emulation_started, 0)) 
 	return;
 
-  uint8_t taint1, taint2;
+  uint8_t taint1 = 0, taint2 = 0;
 
-  taint1 = taint_reg_check(R_CC_SRC*4, 4);
-  taint2 = taint_reg_check(R_CC_DST*4, 4);
+  if(which & 1) taint1 = taint_reg_check(R_CC_SRC*4, 4);
+  if(which & 2) taint2 = taint_reg_check(R_CC_DST*4, 4);
   if (taint1 == 0 && taint2== 0) {
 	eflags_bitmap &= ~mask;
 	return;
@@ -734,6 +732,8 @@ taintcheck_update_eflags(uint32_t mask)
       break;
     }
   }
+
+  assert(src_rec);
 
   for (i = 0; i < 12; i++) { //the highest bit is 12 for cc_eflags
     if(mask & (1<<i)) {
@@ -770,6 +770,7 @@ taintcheck_flag2reg(uint32_t mask, int regidx, int size)
       break;
     }
 
+  assert(src_rec);
   for (i = 0; i < size; i++) { 
     dst_rec = regs_records + (regidx+i)*temu_plugin->taint_record_size;
     memcpy(dst_rec, src_rec, temu_plugin->taint_record_size);
@@ -802,6 +803,7 @@ taintcheck_reg2flag(int regidx, int size, uint32_t mask)
       break;
     }
 
+  assert(src_rec);
   for (i = 0; i < size*8; i++) {
     if(mask & (1<<i)) { 
       dst_rec = eflags_records + i*temu_plugin->taint_record_size;
@@ -1288,7 +1290,9 @@ int taintcheck_patch()          //patch for keystroke propagation on Windows XP 
 {
 #ifndef NO_PROPAGATE
   if (cpu_single_env->eip != 0xbf8a4bde &&
-      cpu_single_env->eip != 0xbf84a74f)
+      cpu_single_env->eip != 0xbf84a74f && 
+      cpu_single_env->eip != 0xbf848d65 &&  //for sp3
+      cpu_single_env->eip != 0xbf848d1c ) // updated sp3
     return 0;
   
   if(!TEMU_emulation_started) return 0;
@@ -1464,11 +1468,10 @@ int taintcheck_jnz_T0_label()
   if (!TEMU_emulation_started || !should_monitor)
     return 0;
 
-  if (taint_reg_check(R_CC_SRC * 4, 8) && temu_plugin && temu_plugin->cjmp) {
+  if (taint_reg_check(R_T0 * 4, 4) && temu_plugin && temu_plugin->cjmp) {
 	insn_tainted = 1; //set it to indicate cjmp propagating taint
     res = temu_plugin->cjmp(cpu_single_env->regs[R_T0]);
     /* res = 1 or 2 */
-    clean_register(R_CC_SRC * 4, 8);
     //if(jcc_inv) res ^= 3;
   }
   return res;

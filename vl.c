@@ -1,4 +1,12 @@
 /*
+TEMU is Copyright (C) 2006-2010, BitBlaze Team.
+
+TEMU is based on QEMU, a whole-system emulator. You can redistribute
+and modify it under the terms of the GNU LGPL, version 2.1 or later,
+but it is made available WITHOUT ANY WARRANTY.
+*/
+
+/*
  * QEMU System Emulator
  *
  * Copyright (c) 2003-2008 Fabrice Bellard
@@ -8902,56 +8910,6 @@ int main(int argc, char **argv)
 #endif
     }
 
-    /* Maintain compatibility with multiple stdio monitors */
-    if (!strcmp(monitor_device,"stdio")) {
-        for (i = 0; i < MAX_SERIAL_PORTS; i++) {
-            if (!strcmp(serial_devices[i],"mon:stdio")) {
-                monitor_device[0] = '\0';
-                break;
-            } else if (!strcmp(serial_devices[i],"stdio")) {
-                monitor_device[0] = '\0';
-                pstrcpy(serial_devices[0], sizeof(serial_devices[0]), "mon:stdio");
-                break;
-            }
-        }
-    }
-    if (monitor_device[0] != '\0') {
-        monitor_hd = qemu_chr_open(monitor_device);
-        if (!monitor_hd) {
-            fprintf(stderr, "qemu: could not open monitor device '%s'\n", monitor_device);
-            exit(1);
-        }
-        monitor_init(monitor_hd, !nographic);
-    }
-
-    for(i = 0; i < MAX_SERIAL_PORTS; i++) {
-        const char *devname = serial_devices[i];
-        if (devname[0] != '\0' && strcmp(devname, "none")) {
-            serial_hds[i] = qemu_chr_open(devname);
-            if (!serial_hds[i]) {
-                fprintf(stderr, "qemu: could not open serial device '%s'\n",
-                        devname);
-                exit(1);
-            }
-            if (strstart(devname, "vc", 0))
-                qemu_chr_printf(serial_hds[i], "serial%d console\r\n", i);
-        }
-    }
-
-    for(i = 0; i < MAX_PARALLEL_PORTS; i++) {
-        const char *devname = parallel_devices[i];
-        if (devname[0] != '\0' && strcmp(devname, "none")) {
-            parallel_hds[i] = qemu_chr_open(devname);
-            if (!parallel_hds[i]) {
-                fprintf(stderr, "qemu: could not open parallel device '%s'\n",
-                        devname);
-                exit(1);
-            }
-            if (strstart(devname, "vc", 0))
-                qemu_chr_printf(parallel_hds[i], "parallel%d console\r\n", i);
-        }
-    }
-
     machine->init(ram_size, vga_ram_size, boot_devices, ds,
                   kernel_filename, kernel_cmdline, initrd_filename, cpu_model);
 
@@ -9010,6 +8968,56 @@ int main(int argc, char **argv)
        	TEMU_after_loadvm(after_loadvm);
 
 #endif
+
+    /* Maintain compatibility with multiple stdio monitors */
+    if (!strcmp(monitor_device,"stdio")) {
+        for (i = 0; i < MAX_SERIAL_PORTS; i++) {
+            if (!strcmp(serial_devices[i],"mon:stdio")) {
+                monitor_device[0] = '\0';
+                break;
+            } else if (!strcmp(serial_devices[i],"stdio")) {
+                monitor_device[0] = '\0';
+                pstrcpy(serial_devices[0], sizeof(serial_devices[0]), "mon:stdio");
+                break;
+            }
+        }
+    }
+    if (monitor_device[0] != '\0') {
+        monitor_hd = qemu_chr_open(monitor_device);
+        if (!monitor_hd) {
+            fprintf(stderr, "qemu: could not open monitor device '%s'\n", monitor_device);
+            exit(1);
+        }
+        monitor_init(monitor_hd, !nographic);
+    }
+
+    for(i = 0; i < MAX_SERIAL_PORTS; i++) {
+        const char *devname = serial_devices[i];
+        if (devname[0] != '\0' && strcmp(devname, "none")) {
+            serial_hds[i] = qemu_chr_open(devname);
+            if (!serial_hds[i]) {
+                fprintf(stderr, "qemu: could not open serial device '%s'\n",
+                        devname);
+                exit(1);
+            }
+            if (strstart(devname, "vc", 0))
+                qemu_chr_printf(serial_hds[i], "serial%d console\r\n", i);
+        }
+    }
+
+    for(i = 0; i < MAX_PARALLEL_PORTS; i++) {
+        const char *devname = parallel_devices[i];
+        if (devname[0] != '\0' && strcmp(devname, "none")) {
+            parallel_hds[i] = qemu_chr_open(devname);
+            if (!parallel_hds[i]) {
+                fprintf(stderr, "qemu: could not open parallel device '%s'\n",
+                        devname);
+                exit(1);
+            }
+            if (strstart(devname, "vc", 0))
+                qemu_chr_printf(parallel_hds[i], "parallel%d console\r\n", i);
+        }
+    }
 
     {
         /* XXX: simplify init */

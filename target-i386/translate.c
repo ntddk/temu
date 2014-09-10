@@ -1,4 +1,12 @@
 /*
+TEMU is Copyright (C) 2006-2010, BitBlaze Team.
+
+TEMU is based on QEMU, a whole-system emulator. You can redistribute
+and modify it under the terms of the GNU LGPL, version 2.1 or later,
+but it is made available WITHOUT ANY WARRANTY.
+*/
+
+/*
  *  i386 translation
  *
  *  Copyright (c) 2003 Fabrice Bellard
@@ -1277,6 +1285,7 @@ static GenOpFunc *gen_setcc_slow[8] = {
     gen_op_setle_T0_cc,
 };
 
+#ifndef TAINT_ENABLED
 static GenOpFunc *gen_setcc_sub[4][8] = {
     [OT_BYTE] = {
         NULL,
@@ -1321,6 +1330,9 @@ static GenOpFunc *gen_setcc_sub[4][8] = {
     },
 #endif
 };
+
+#endif //TAINT_ENABLED
+
 
 static GenOpFunc *gen_op_fp_arith_ST0_FT0[8] = {
     gen_op_fadd_ST0_FT0,
@@ -2002,6 +2014,7 @@ static void gen_setcc(DisasContext *s, int b)
     inv = b & 1;
     jcc_op = (b >> 1) & 7;
     switch(s->cc_op) {
+#ifndef TAINT_ENABLED
         /* we optimize the cmp/jcc case */
     case CC_OP_SUBB:
     case CC_OP_SUBW:
@@ -2048,6 +2061,7 @@ static void gen_setcc(DisasContext *s, int b)
             goto slow_jcc;
         }
         break;
+#endif //TAINT_ENABLED
     default:
     slow_jcc:
         if (s->cc_op != CC_OP_DYNAMIC)

@@ -1,0 +1,65 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH MMLS 1 "JAN 2005" "User Manuals"
+.SH NAME
+mmls \- Display the layout of media management systems (partition tables)
+.SH SYNOPSIS
+.B mmls [-t
+.I mmtype 
+.B ] [-o
+.I offset
+.B ] [ -i
+.I imgtype
+.B ] [-brvV] 
+.I image [images]
+.SH DESCRIPTION
+.B mmls
+displays the layout of the media management systems, which include partition
+tables and disk labels.
+
+The options are as follows:
+.IP "-t mmtype"
+Specify the media management type.  Use the -? option for supported types.
+.IP "-o offset"
+Specify the offset into the image where the volume containing the
+partition system starts.  The relative offset of the partition system
+will be added to this value.
+.IP "-i imgtype"
+Identify the type of image file, such as raw or split.  Raw is the default.
+.IP -b
+Include a column with the partition sizes in bytes
+.IP -r
+Recurse into DOS partitions and look for other partition tables.  This setup frequently occurs when Unix is installed on x86 systems.  
+.IP -v
+Verbose output of debugging statements to stderr
+.IP -V
+Display version
+.IP "image [images]"
+One (or more if split) disk images whose format is given with '-i'.
+
+.PP
+'mmls' is similar to 'fdisk -lu' in Linux with a few differences.  
+Namely, it will show which sectors are not being used so that those
+can be searched for hidden data.  It also gives the length value so
+that it can be plugged into 'dd' more easily for extracting the
+partitions.  It also will show BSD disk labels for Free, Open, and
+NetBSD and will display the output in sectors and not cylinders.  
+Lastly, it works on non-Linux systems.
+
+.SH "EXAMPLES"
+To list the partition table of a Windows system using autodetect:
+
+# mmls disk_image.dd
+
+To list the contents of a BSD system that starts in sector 12345 of a split image:
+
+# mmls -t bsd -o 12345 -i split disk-1.dd disk-2.dd
+
+
+.SH "SEE ALSO"
+.BR dd (1),
+.SH HISTORY
+.BR "mmls" " first appeared in " "The Sleuth Kit" " v1.63."
+.SH AUTHOR
+Brian Carrier <carrier@sleuthkit.org>
