@@ -668,7 +668,7 @@ static int usb_hid_handle_control(USBDevice *dev, int request, int value,
             case 3:
                 /* vendor description */
                 //ret = set_usb_string(data, "QEMU " QEMU_VERSION);
-                ret = set_usb_string(data, "QEMU " UMET_VERSION);
+                ret = set_usb_string(data, "UMET " QEMU_VERSION);
                 break;
             case 4:
                 ret = set_usb_string(data, "HID Mouse");
