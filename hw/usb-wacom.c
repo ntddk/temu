@@ -154,7 +154,8 @@ static int usb_mouse_poll(USBWacomState *s, uint8_t *buf, int len)
 
     if (!s->mouse_grabbed) {
         s->eh_entry = qemu_add_mouse_event_handler(usb_mouse_event, s, 0,
-                        "QEMU PenPartner tablet");
+                        //"QEMU PenPartner tablet");
+                        "UMET PenPartner tablet");
         s->mouse_grabbed = 1;
     }
 
@@ -191,7 +192,8 @@ static int usb_wacom_poll(USBWacomState *s, uint8_t *buf, int len)
 
     if (!s->mouse_grabbed) {
         s->eh_entry = qemu_add_mouse_event_handler(usb_wacom_event, s, 1,
-                        "QEMU PenPartner tablet");
+                        //"QEMU PenPartner tablet");
+                        "UMET PenPartner tablet");
         s->mouse_grabbed = 1;
     }
 
@@ -302,7 +304,8 @@ static int usb_wacom_handle_control(USBDevice *dev, int request, int value,
                 break;
             case 3:
                 /* vendor description */
-                ret = set_usb_string(data, "QEMU " QEMU_VERSION);
+                //ret = set_usb_string(data, "QEMU " QEMU_VERSION);
+                ret = set_usb_string(data, "UMET " QEMU_VERSION);
                 break;
             case 4:
                 ret = set_usb_string(data, "Wacom Tablet");
@@ -408,7 +411,8 @@ USBDevice *usb_wacom_init(void)
     s->dev.handle_destroy = usb_wacom_handle_destroy;
 
     pstrcpy(s->dev.devname, sizeof(s->dev.devname),
-            "QEMU PenPartner Tablet");
+            //"QEMU PenPartner Tablet");
+            "UMET PenPartner Tablet");
 
     return (USBDevice *) s;
 }

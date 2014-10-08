@@ -911,8 +911,10 @@ void slavio_serial_ms_kbd_init(target_phys_addr_t base, qemu_irq irq,
                                                      s);
     cpu_register_physical_memory(base, SERIAL_SIZE, slavio_serial_io_memory);
 
+    //qemu_add_mouse_event_handler(sunmouse_event, &s->chn[0], 0,
+    //                             "QEMU Sun Mouse");
     qemu_add_mouse_event_handler(sunmouse_event, &s->chn[0], 0,
-                                 "QEMU Sun Mouse");
+                                 "UMET Sun Mouse");
     qemu_add_kbd_event_handler(sunkbd_event, &s->chn[1]);
     register_savevm("slavio_serial_mouse", base, 2, slavio_serial_save,
                     slavio_serial_load, s);

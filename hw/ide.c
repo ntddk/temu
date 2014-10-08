@@ -481,7 +481,8 @@ static void ide_identify(IDEState *s)
     put_le16(p + 21, 512); /* cache size in sectors */
     put_le16(p + 22, 4); /* ecc bytes */
     padstr((char *)(p + 23), QEMU_VERSION, 8); /* firmware version */
-    padstr((char *)(p + 27), "QEMU HARDDISK", 40); /* model */
+    //padstr((char *)(p + 27), "QEMU HARDDISK", 40); /* model */
+    padstr((char *)(p + 27), "UMET HARDDISK", 40); /* model */
 #if MAX_MULT_SECTORS > 1
     put_le16(p + 47, 0x8000 | MAX_MULT_SECTORS);
 #endif
@@ -546,7 +547,8 @@ static void ide_atapi_identify(IDEState *s)
     put_le16(p + 21, 512); /* cache size in sectors */
     put_le16(p + 22, 4); /* ecc bytes */
     padstr((char *)(p + 23), QEMU_VERSION, 8); /* firmware version */
-    padstr((char *)(p + 27), "QEMU CD-ROM", 40); /* model */
+    //padstr((char *)(p + 27), "QEMU CD-ROM", 40); /* model */
+    padstr((char *)(p + 27), "UMET CD-ROM", 40); /* model */
     put_le16(p + 48, 1); /* dword I/O (XXX: should not be set on CDROM) */
 #ifdef USE_DMA_CDROM
     put_le16(p + 49, 1 << 9 | 1 << 8); /* DMA and LBA supported */
@@ -599,7 +601,8 @@ static void ide_cfata_identify(IDEState *s)
     padstr((char *)(p + 10), buf, 20);	/* Serial number in ASCII */
     put_le16(p + 22, 0x0004);			/* ECC bytes */
     padstr((char *) (p + 23), QEMU_VERSION, 8);	/* Firmware Revision */
-    padstr((char *) (p + 27), "QEMU MICRODRIVE", 40);/* Model number */
+    //padstr((char *) (p + 27), "QEMU MICRODRIVE", 40);/* Model number */
+    padstr((char *) (p + 27), "UMET MICRODRIVE", 40);/* Model number */
 #if MAX_MULT_SECTORS > 1
     put_le16(p + 47, 0x8000 | MAX_MULT_SECTORS);
 #else
@@ -1653,8 +1656,10 @@ static void ide_atapi_cmd(IDEState *s)
         buf[5] = 0; /* reserved */
         buf[6] = 0; /* reserved */
         buf[7] = 0; /* reserved */
-        padstr8(buf + 8, 8, "QEMU");
-        padstr8(buf + 16, 16, "QEMU CD-ROM");
+        //padstr8(buf + 8, 8, "QEMU");
+        padstr8(buf + 8, 8, "UMET");
+        //padstr8(buf + 16, 16, "QEMU CD-ROM");
+        padstr8(buf + 16, 16, "UMET CD-ROM");
         padstr8(buf + 32, 4, QEMU_VERSION);
         ide_atapi_cmd_reply(s, 36, max_len);
         break;

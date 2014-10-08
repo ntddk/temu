@@ -96,7 +96,8 @@ static int sun4u_NVRAM_set_params (m48t59_t *nvram, uint16_t NVRAM_size,
     memset(image, '\0', sizeof(image));
 
     // Try to match PPC NVRAM
-    strcpy(header->struct_ident, "QEMU_BIOS");
+    //strcpy(header->struct_ident, "QEMU_BIOS");
+    strcpy(header->struct_ident, "UMET_BIOS");
     header->struct_version = cpu_to_be32(3); /* structure v3 */
 
     header->nvram_size = cpu_to_be16(NVRAM_size);

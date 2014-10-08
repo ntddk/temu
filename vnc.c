@@ -1305,9 +1305,11 @@ static int protocol_client_init(VncState *vs, uint8_t *data, size_t len)
     vnc_write(vs, pad, 3);           /* padding */
 
     if (qemu_name)
-        size = snprintf(buf, sizeof(buf), "QEMU (%s)", qemu_name);
+        //size = snprintf(buf, sizeof(buf), "QEMU (%s)", qemu_name);
+        size = snprintf(buf, sizeof(buf), "UMET (%s)", qemu_name);
     else
-        size = snprintf(buf, sizeof(buf), "QEMU");
+        //size = snprintf(buf, sizeof(buf), "QEMU");
+        size = snprintf(buf, sizeof(buf), "UMET");
 
     vnc_write_u32(vs, size);
     vnc_write(vs, buf, size);

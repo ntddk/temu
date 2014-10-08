@@ -157,8 +157,10 @@ struct ads7846_state_s *ads7846_init(qemu_irq penirq)
     s->input[7] = ADS_TEMP1;	/* TEMP1 */
 
     /* We want absolute coordinates */
+    //qemu_add_mouse_event_handler(ads7846_ts_event, s, 1,
+    //                "QEMU ADS7846-driven Touchscreen");
     qemu_add_mouse_event_handler(ads7846_ts_event, s, 1,
-                    "QEMU ADS7846-driven Touchscreen");
+                    "UMET ADS7846-driven Touchscreen");
 
     ads7846_int_update(s);
 
