@@ -784,7 +784,8 @@ static int dma_buf_rw(BMDMAState *bm, int is_write)
         uint32_t size;
     } prd;
     int l, len;
-
+    int count = 0;
+    int64_t tmp_sector = bm->sector;
     for(;;) {
         l = s->io_buffer_size - s->io_buffer_index;
         if (l <= 0)
@@ -809,23 +810,25 @@ static int dma_buf_rw(BMDMAState *bm, int is_write)
             l = bm->cur_prd_len;
         if (l > 0) {
             if (is_write) {
+                count++;
                 cpu_physical_memory_write(bm->cur_prd_addr,
                                           s->io_buffer + s->io_buffer_index, l);
 #if TAINT_ENABLED
-				if(bm->sector >= 0)
-					taintcheck_chk_hdread(bm->cur_prd_addr, l, bm->sector, s->bs);
+				if(tmp_sector >= 0)
+					taintcheck_chk_hdread(bm->cur_prd_addr, l, tmp_sector, s->bs);
 #endif
             } else {
                 cpu_physical_memory_read(bm->cur_prd_addr,
                                           s->io_buffer + s->io_buffer_index, l);
 #if TAINT_ENABLED
-				if(bm->sector >= 0)
-					taintcheck_chk_hdwrite(bm->cur_prd_addr, l, bm->sector, s->bs);
+				if(tmp_sector >= 0)
+					taintcheck_chk_hdwrite(bm->cur_prd_addr, l, tmp_sector, s->bs);
 #endif
             }
             bm->cur_prd_addr += l;
             bm->cur_prd_len -= l;
             s->io_buffer_index += l;
+            tmp_sector += (l/512);
         }
     }
     return 1;
@@ -841,6 +844,11 @@ static void ide_read_dma_cb(void *opaque, int ret)
 
     n = s->io_buffer_size >> 9;
     sector_num = ide_get_sector(s);
+
+#ifdef TAINT_ENABLED
+    bm->sector = sector_num;
+#endif
+
     if (n > 0) {
         sector_num += n;
         ide_set_sector(s, sector_num);
@@ -872,7 +880,7 @@ static void ide_read_dma_cb(void *opaque, int ret)
     printf("aio_read: sector_num=%lld n=%d\n", sector_num, n);
 #endif
 #if TAINT_ENABLED
-    bm->sector = sector_num;
+    // bm->sector = sector_num;
 #endif
     bm->aiocb = bdrv_aio_read(s->bs, sector_num, s->io_buffer, n,
                               ide_read_dma_cb, bm);
@@ -951,6 +959,10 @@ static void ide_write_dma_cb(void *opaque, int ret)
         s->nsector -= n;
     }
 
+#ifdef TAINT_ENABLED
+    bm->sector = sector_num;
+#endif 
+
     /* end of transfer ? */
     if (s->nsector == 0) {
         s->status = READY_STAT | SEEK_STAT;
@@ -977,7 +989,7 @@ static void ide_write_dma_cb(void *opaque, int ret)
     printf("aio_write: sector_num=%lld n=%d\n", sector_num, n);
 #endif
 #if TAINT_ENABLED
-    bm->sector = sector_num;
+    // bm->sector = sector_num;
 #endif
     bm->aiocb = bdrv_aio_write(s->bs, sector_num, s->io_buffer, n,
                                ide_write_dma_cb, bm);
