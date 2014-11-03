@@ -760,6 +760,16 @@ static int TEMU_load(QEMUFile *f, void *opaque, int version_id)
   return 0;
 }
 
+void TEMU_syscall_monitor(){
+  uint32_t sysidx;
+  if(temu_plugin){
+  	if(temu_plugin->syscall_monitor){
+  		TEMU_read_register(eax_reg,&sysidx);
+  		temu_plugin->syscall_monitor(sysidx);
+  	}
+  }
+}
+
 void TEMU_init()
 {
   register_savevm("TEMU", 0, 1, TEMU_save, TEMU_load, NULL);

@@ -419,6 +419,7 @@ typedef struct {
   void (*pre_mem_write)(uint32_t virt_addr, uint32_t phys_addr, int size);
 #endif
 
+  void (*syscall_monitor)();
 } plugin_interface_t;
 
 /// This flag tells if emulation mode is enabled

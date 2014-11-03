@@ -2695,6 +2695,7 @@ void helper_lret_protected(int shift, int addend)
 
 void helper_sysenter(void)
 {
+    TEMU_syscall_monitor();
     if (env->sysenter_cs == 0) {
         raise_exception_err(EXCP0D_GPF, 0);
     }
