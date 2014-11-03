@@ -415,6 +415,10 @@ typedef struct {
   void (*call_analysis)(uint32_t next_eip);
 #endif
 
+#ifdef RET_ANALYSIS
+  void (*ret_analysis)(uint32_t next_eip);
+#endif
+
 #ifdef PRE_MEM_WRITE
   void (*pre_mem_write)(uint32_t virt_addr, uint32_t phys_addr, int size);
 #endif
@@ -530,6 +534,9 @@ void TEMU_after_iret_protected(void);
 void TEMU_update_cpustate();
 void TEMU_loadvm(void *opaque);
 
+#ifdef RET_ANALYSIS
+void TEMU_ret_analysis(uint32_t next_eip);
+#endif
 
 #include "TEMU_vm_compress.h"
 

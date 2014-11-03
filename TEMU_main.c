@@ -660,11 +660,23 @@ void TEMU_call_analysis(uint32_t next_eip)
   if (!TEMU_emulation_started || !should_monitor)
     return;
 
-  temu_plugin->call_analysis(next_eip);
+  if(temu_plugin->call_analysis != NULL){
+  	temu_plugin->call_analysis(next_eip);
+  }
 }
 
 #endif
 
+#ifdef RET_ANALYSIS
+void TEMU_ret_analysis(uint32_t next_eip){
+  if (!TEMU_emulation_started || !should_monitor)
+    return;
+	
+  if(temu_plugin->ret_analysis != NULL){
+ 	 temu_plugin->ret_analysis(next_eip);
+  }
+}
+#endif
 
 static void TEMU_save(QEMUFile *f, void *opaque)
 {
