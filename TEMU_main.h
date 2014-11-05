@@ -424,6 +424,8 @@ typedef struct {
 #endif
 
   void (*syscall_monitor)();
+
+  void (*set_initial_taint_file)();
 } plugin_interface_t;
 
 /// This flag tells if emulation mode is enabled

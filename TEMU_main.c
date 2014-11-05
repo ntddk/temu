@@ -128,7 +128,12 @@ void do_load_plugin(const char *plugin_path)
         temu_plugin->bdrv_open(i, drives_table[i].bdrv);
     }
   }
- 
+
+  if(temu_plugin->set_initial_taint_file){
+    printf("set_initial_taint_file\n");  
+    temu_plugin->set_initial_taint_file();
+  }
+
   strncpy(temu_plugin_path, plugin_path, PATH_MAX);
   term_printf("%s is loaded successfully!\n", plugin_path);
 }
