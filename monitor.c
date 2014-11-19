@@ -2085,8 +2085,8 @@ static void monitor_handle_command(const char *cmdline)
     void *str_allocated[MAX_ARGS];
     void *args[MAX_ARGS];
 
-#ifdef DEBUG
     term_printf("command='%s'\n", cmdline);
+#ifdef DEBUG
 #endif
 
     /* extract the command name */
@@ -2107,8 +2107,10 @@ static void monitor_handle_command(const char *cmdline)
 
     /* find the command */
     for(cmd = term_cmds; cmd->name != NULL; cmd++) {
-        if (compare_cmd(cmdname, cmd->name))
+        if (compare_cmd(cmdname, cmd->name)){
+            term_printf("cmd: %s\n", cmd->name);
             goto found;
+        }
     }
     //TEMU plugin commands
     if(temu_plugin) {
