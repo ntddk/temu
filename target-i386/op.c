@@ -277,6 +277,9 @@ void OPPROTO op_cmpl_T0_T1_cc(void)
 	taintcheck_reg2reg(R_T1, R_CC_SRC, 4);
 	taintcheck_fn2regs(R_T0, R_T1, R_CC_DST, 4);
 #endif	
+#if CMP_ANALYSIS
+    TEMU_cmp_analysis((uint32_t)T0, (uint32_t)T1);
+#endif
 }
 
 void OPPROTO op_update_inc_cc(void)
@@ -294,7 +297,10 @@ void OPPROTO op_testl_T0_T1_cc(void)
     CC_DST = T0 & T1;
 #if TAINT_FLAGS
     taintcheck_fn2regs(R_T0, R_T1, R_CC_DST, 4);
-#endif	
+#endif  
+#if TEST_ANALYSIS
+    TEMU_test_analysis((uint32_t)T0, (uint32_t)T1);
+#endif
 }
 
 /* operations without flags */

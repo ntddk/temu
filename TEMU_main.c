@@ -683,6 +683,28 @@ void TEMU_ret_analysis(uint32_t next_eip){
 }
 #endif
 
+#ifdef CMP_ANALYSIS
+void TEMU_cmp_analysis(uint32_t op1, uint32_t op2){
+  if (!TEMU_emulation_started || !should_monitor)
+    return;
+  
+  if(temu_plugin->cmp_analysis != NULL){
+   temu_plugin->cmp_analysis(op1,op2);
+  }
+}
+#endif
+
+#ifdef TEST_ANALYSIS
+void TEMU_test_analysis(uint32_t op1, uint32_t op2){
+  if (!TEMU_emulation_started || !should_monitor)
+    return;
+  
+  if(temu_plugin->test_analysis != NULL){
+   temu_plugin->test_analysis(op1,op2);
+  }
+}
+#endif
+
 static void TEMU_save(QEMUFile *f, void *opaque)
 {
   uint32_t len = strlen(temu_plugin_path) + 1;

@@ -419,6 +419,14 @@ typedef struct {
   void (*ret_analysis)(uint32_t next_eip);
 #endif
 
+#ifdef CMP_ANALYSIS
+  void (*cmp_analysis)(uint32_t op1, uint32_t op2);
+#endif
+
+#ifdef TEST_ANALYSIS
+  void (*test_analysis)(uint32_t op1, uint32_t op2);
+#endif
+
 #ifdef PRE_MEM_WRITE
   void (*pre_mem_write)(uint32_t virt_addr, uint32_t phys_addr, int size);
 #endif
@@ -538,6 +546,14 @@ void TEMU_loadvm(void *opaque);
 
 #ifdef RET_ANALYSIS
 void TEMU_ret_analysis(uint32_t next_eip);
+#endif
+
+#ifdef CMP_ANALYSIS
+void TEMU_cmp_analysis(uint32_t op1, uint32_t op2);
+#endif
+
+#ifdef TEST_ANALYSIS
+void TEMU_test_analysis(uint32_t op1, uint32_t op2);
 #endif
 
 #include "TEMU_vm_compress.h"
