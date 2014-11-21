@@ -192,12 +192,12 @@ void OPPROTO glue(glue(op_ldsl, MEMSUFFIX), _T1_A0)(void)
 
 void OPPROTO glue(glue(op_ldq, MEMSUFFIX), _T0_A0)(void)
 {
-    T0 = glue(ldq, MEMSUFFIX)(A0);
+    T0 = glue(ldq, MEMSUFFIX)(A0, PARAM1);
 }
 
 void OPPROTO glue(glue(op_ldq, MEMSUFFIX), _T1_A0)(void)
 {
-    T1 = glue(ldq, MEMSUFFIX)(A0);
+    T1 = glue(ldq, MEMSUFFIX)(A0, PARAM1);
 }
 
 void OPPROTO glue(glue(op_stq, MEMSUFFIX), _T0_A0)(void)
