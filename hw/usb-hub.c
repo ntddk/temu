@@ -276,12 +276,12 @@ static int usb_hub_handle_control(USBDevice *dev, int request, int value,
             case 2:
                 /* product description */
                 //ret = set_usb_string(data, "QEMU USB Hub");
-                ret = set_usb_string(data, "UMET USB Hub");
+                ret = set_usb_string(data, "DELL USB Hub");
                 break;
             case 3:
                 /* vendor description */
                 //ret = set_usb_string(data, "QEMU " QEMU_VERSION);
-                ret = set_usb_string(data, "UMET " QEMU_VERSION);
+                ret = set_usb_string(data, "DELL " QEMU_VERSION);
                 break;
             default:
                 goto fail;
@@ -544,7 +544,7 @@ USBDevice *usb_hub_init(int nb_ports)
     s->dev.handle_destroy = usb_hub_handle_destroy;
 
     //pstrcpy(s->dev.devname, sizeof(s->dev.devname), "QEMU USB Hub");
-    pstrcpy(s->dev.devname, sizeof(s->dev.devname), "UMET USB Hub");
+    pstrcpy(s->dev.devname, sizeof(s->dev.devname), "DELL USB Hub");
 
     s->nb_ports = nb_ports;
     for(i = 0; i < s->nb_ports; i++) {

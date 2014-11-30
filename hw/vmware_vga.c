@@ -1164,7 +1164,7 @@ void pci_vmsvga_init(PCIBus *bus, DisplayState *ds, uint8_t *vga_ram_base,
     /* Setup PCI configuration */
     s = (struct pci_vmsvga_state_s *)
         //pci_register_device(bus, "QEMUware SVGA",
-        pci_register_device(bus, "UMETware SVGA",
+        pci_register_device(bus, "DELLware SVGA",
                 sizeof(struct pci_vmsvga_state_s), -1, 0, 0);
     s->card.config[PCI_VENDOR_ID]	= PCI_VENDOR_ID_VMWARE & 0xff;
     s->card.config[PCI_VENDOR_ID + 1]	= PCI_VENDOR_ID_VMWARE >> 8;

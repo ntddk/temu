@@ -168,7 +168,7 @@ static void nvram_init(m48t59_t *nvram, uint8_t *macaddr, const char *cmdline,
 
     // Try to match PPC NVRAM
     //strcpy(header->struct_ident, "QEMU_BIOS");
-    strcpy(header->struct_ident, "UMET_BIOS");
+    strcpy(header->struct_ident, "DELL_BIOS");
     header->struct_version = cpu_to_be32(3); /* structure v3 */
 
     header->nvram_size = cpu_to_be16(0x2000);

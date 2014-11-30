@@ -1378,7 +1378,7 @@ int PPC_NVRAM_set_params (nvram_t *nvram, uint16_t NVRAM_size,
 
     /* Set parameters for Open Hack'Ware BIOS */
     //NVRAM_set_string(nvram, 0x00, "QEMU_BIOS", 16);
-    NVRAM_set_string(nvram, 0x00, "UMET_BIOS", 16);
+    NVRAM_set_string(nvram, 0x00, "DELL_BIOS", 16);
     NVRAM_set_lword(nvram,  0x10, 0x00000002); /* structure v2 */
     NVRAM_set_word(nvram,   0x14, NVRAM_size);
     NVRAM_set_string(nvram, 0x20, arch, 16);

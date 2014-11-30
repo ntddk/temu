@@ -211,7 +211,7 @@ static void sd_set_scr(SDState *sd)
 #define MID	0xaa
 #define OID	"XY"
 //#define PNM	"QEMU!"
-#define PNM	"UMET!"
+#define PNM	"DELL!"
 #define PRV	0x01
 #define MDT_YR	2006
 #define MDT_MON	2

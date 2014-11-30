@@ -160,7 +160,7 @@ struct ads7846_state_s *ads7846_init(qemu_irq penirq)
     //qemu_add_mouse_event_handler(ads7846_ts_event, s, 1,
     //                "QEMU ADS7846-driven Touchscreen");
     qemu_add_mouse_event_handler(ads7846_ts_event, s, 1,
-                    "UMET ADS7846-driven Touchscreen");
+                    "DELL ADS7846-driven Touchscreen");
 
     ads7846_int_update(s);
 

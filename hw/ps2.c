@@ -573,7 +573,7 @@ void *ps2_mouse_init(void (*update_irq)(void *, int), void *update_arg)
     ps2_reset(&s->common);
     register_savevm("ps2mouse", 0, 2, ps2_mouse_save, ps2_mouse_load, s);
     //qemu_add_mouse_event_handler(ps2_mouse_event, s, 0, "QEMU PS/2 Mouse");
-    qemu_add_mouse_event_handler(ps2_mouse_event, s, 0, "UMET PS/2 Mouse");
+    qemu_add_mouse_event_handler(ps2_mouse_event, s, 0, "DELL PS/2 Mouse");
     qemu_register_reset(ps2_reset, &s->common);
     return s;
 }

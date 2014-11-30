@@ -214,7 +214,7 @@ void *audio_calloc (const char *funcname, int nmemb, size_t size)
 static char *audio_alloc_prefix (const char *s)
 {
     //const char qemu_prefix[] = "QEMU_";
-    const char qemu_prefix[] = "UMET_";
+    const char qemu_prefix[] = "DELL_";
     size_t len;
     char *r;
 
@@ -448,7 +448,7 @@ static void audio_process_options (const char *prefix,
 {
     char *optname;
     //const char qemu_prefix[] = "QEMU_";
-    const char qemu_prefix[] = "UMET_";
+    const char qemu_prefix[] = "DELL_";
     size_t preflen;
 
     if (audio_bug (AUDIO_FUNC, !prefix)) {
@@ -1753,7 +1753,7 @@ AudioState *AUD_init (void)
     {
         int def;
         //drvname = audio_get_conf_str ("QEMU_AUDIO_DRV", NULL, &def);
-        drvname = audio_get_conf_str ("UMET_AUDIO_DRV", NULL, &def);
+        drvname = audio_get_conf_str ("DELL_AUDIO_DRV", NULL, &def);
     }
 
     if (drvname) {

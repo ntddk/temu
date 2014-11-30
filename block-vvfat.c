@@ -871,7 +871,7 @@ static int init_directories(BDRVVVFATState* s,
 	direntry_t* entry=array_get_next(&(s->directory));
 	entry->attributes=0x28; /* archive | volume label */
 	//snprintf((char*)entry->name,11,"QEMU VVFAT");
-	snprintf((char*)entry->name,11,"UMET VVFAT");
+	snprintf((char*)entry->name,11,"DELL VVFAT");
     }
 
     /* Now build FAT, and write back information into directory */
@@ -958,7 +958,7 @@ static int init_directories(BDRVVVFATState* s,
     bootsector->jump[1]=0x3e;
     bootsector->jump[2]=0x90;
     //memcpy(bootsector->name,"QEMU    ",8);
-    memcpy(bootsector->name,"UMET    ",8);
+    memcpy(bootsector->name,"DELL    ",8);
     bootsector->sector_size=cpu_to_le16(0x200);
     bootsector->sectors_per_cluster=s->sectors_per_cluster;
     bootsector->reserved_sectors=cpu_to_le16(1);
@@ -980,7 +980,7 @@ static int init_directories(BDRVVVFATState* s,
     bootsector->u.fat16.id=cpu_to_le32(0xfabe1afd);
 
     //memcpy(bootsector->u.fat16.volume_label,"QEMU VVFAT ",11);
-    memcpy(bootsector->u.fat16.volume_label,"UMET VVFAT ",11);
+    memcpy(bootsector->u.fat16.volume_label,"DELL VVFAT ",11);
     memcpy(bootsector->fat_type,(s->fat_type==12?"FAT12   ":s->fat_type==16?"FAT16   ":"FAT32   "),8);
     bootsector->magic[0]=0x55; bootsector->magic[1]=0xaa;
 
@@ -2173,7 +2173,7 @@ DLOG(fprintf(stderr, "commit_direntries for %s, parent_mapping_index %d\n", mapp
 	if (ret)
 	    return ret;
 	//assert(!strncmp(s->directory.pointer, "QEMU", 4));
-	assert(!strncmp(s->directory.pointer, "UMET", 4));
+	assert(!strncmp(s->directory.pointer, "DELL", 4));
 	current_dir_index += factor;
     }
 

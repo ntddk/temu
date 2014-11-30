@@ -370,14 +370,14 @@ static int32_t scsi_send_command(SCSIDevice *d, uint32_t tag,
 	    outbuf[0] = 5;
             outbuf[1] = 0x80;
 	    //memcpy(&outbuf[16], "QEMU CD-ROM    ", 16);
-	    memcpy(&outbuf[16], "UMET CD-ROM    ", 16);
+	    memcpy(&outbuf[16], "DELL CD-ROM    ", 16);
 	} else {
 	    outbuf[0] = 0;
 	    //memcpy(&outbuf[16], "QEMU HARDDISK  ", 16);
-	    memcpy(&outbuf[16], "UMET HARDDISK  ", 16);
+	    memcpy(&outbuf[16], "DELL HARDDISK  ", 16);
 	}
 	//memcpy(&outbuf[8], "QEMU   ", 8);
-	memcpy(&outbuf[8], "UMET   ", 8);
+	memcpy(&outbuf[8], "DELL   ", 8);
         memcpy(&outbuf[32], QEMU_VERSION, 4);
         /* Identify device as SCSI-3 rev 1.
            Some later commands are also implemented. */

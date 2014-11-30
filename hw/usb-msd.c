@@ -284,12 +284,12 @@ static int usb_msd_handle_control(USBDevice *dev, int request, int value,
             case 1:
                 /* vendor description */
                 //ret = set_usb_string(data, "QEMU " QEMU_VERSION);
-                ret = set_usb_string(data, "UMET " QEMU_VERSION);
+                ret = set_usb_string(data, "DELL " QEMU_VERSION);
                 break;
             case 2:
                 /* product description */
                 //ret = set_usb_string(data, "QEMU USB HARDDRIVE");
-                ret = set_usb_string(data, "UMET USB HARDDRIVE");
+                ret = set_usb_string(data, "DELL USB HARDDRIVE");
                 break;
             case 3:
                 /* serial number */
@@ -540,7 +540,7 @@ USBDevice *usb_msd_init(const char *filename)
     s->dev.handle_destroy = usb_msd_handle_destroy;
 
     //snprintf(s->dev.devname, sizeof(s->dev.devname), "QEMU USB MSD(%.16s)",
-    snprintf(s->dev.devname, sizeof(s->dev.devname), "UMET USB MSD(%.16s)",
+    snprintf(s->dev.devname, sizeof(s->dev.devname), "DELL USB MSD(%.16s)",
              filename);
 
     s->scsi_dev = scsi_disk_init(bdrv, 0, usb_msd_command_complete, s);

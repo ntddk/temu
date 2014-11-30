@@ -1036,7 +1036,7 @@ struct uwire_slave_s *tsc2102_init(qemu_irq pint, AudioState *audio)
     tsc210x_reset(s);
 
     qemu_add_mouse_event_handler(tsc210x_touchscreen_event, s, 1,
-                    "UMET TSC2102-driven Touchscreen");
+                    "DELL TSC2102-driven Touchscreen");
 
     if (s->audio)
         AUD_register_card(s->audio, s->name, &s->card);

@@ -409,5 +409,5 @@ void adb_mouse_init(ADBBusState *bus)
                             adb_mouse_reset, s);
     adb_mouse_reset(d);
     //qemu_add_mouse_event_handler(adb_mouse_event, d, 0, "QEMU ADB Mouse");
-    qemu_add_mouse_event_handler(adb_mouse_event, d, 0, "UMET ADB Mouse");
+    qemu_add_mouse_event_handler(adb_mouse_event, d, 0, "DELL ADB Mouse");
 }

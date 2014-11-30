@@ -475,7 +475,7 @@ static int usb_mouse_poll(USBHIDState *hs, uint8_t *buf, int len)
 	//s->eh_entry = qemu_add_mouse_event_handler(usb_mouse_event, hs,
         //                                          0, "QEMU USB Mouse");
 	s->eh_entry = qemu_add_mouse_event_handler(usb_mouse_event, hs,
-                                                  0, "UMET USB Mouse");
+                                                  0, "DELL USB Mouse");
 	s->mouse_grabbed = 1;
     }
 
@@ -515,7 +515,7 @@ static int usb_tablet_poll(USBHIDState *hs, uint8_t *buf, int len)
 	//s->eh_entry = qemu_add_mouse_event_handler(usb_tablet_event, hs,
         //                                          1, "QEMU USB Tablet");
 	s->eh_entry = qemu_add_mouse_event_handler(usb_tablet_event, hs,
-                                                  1, "UMET USB Tablet");
+                                                  1, "DELL USB Tablet");
 	s->mouse_grabbed = 1;
     }
 
@@ -668,7 +668,7 @@ static int usb_hid_handle_control(USBDevice *dev, int request, int value,
             case 3:
                 /* vendor description */
                 //ret = set_usb_string(data, "QEMU " QEMU_VERSION);
-                ret = set_usb_string(data, "UMET " QEMU_VERSION);
+                ret = set_usb_string(data, "DELL " QEMU_VERSION);
                 break;
             case 4:
                 ret = set_usb_string(data, "HID Mouse");
@@ -828,7 +828,7 @@ USBDevice *usb_tablet_init(void)
     s->changed = 1;
 
     //pstrcpy(s->dev.devname, sizeof(s->dev.devname), "QEMU USB Tablet");
-    pstrcpy(s->dev.devname, sizeof(s->dev.devname), "UMET USB Tablet");
+    pstrcpy(s->dev.devname, sizeof(s->dev.devname), "DELL USB Tablet");
 
     return (USBDevice *)s;
 }
@@ -852,7 +852,7 @@ USBDevice *usb_mouse_init(void)
     s->changed = 1;
 
     //pstrcpy(s->dev.devname, sizeof(s->dev.devname), "QEMU USB Mouse");
-    pstrcpy(s->dev.devname, sizeof(s->dev.devname), "UMET USB Mouse");
+    pstrcpy(s->dev.devname, sizeof(s->dev.devname), "DELL USB Mouse");
 
     return (USBDevice *)s;
 }
@@ -874,7 +874,7 @@ USBDevice *usb_keyboard_init(void)
     s->kind = USB_KEYBOARD;
 
     //pstrcpy(s->dev.devname, sizeof(s->dev.devname), "QEMU USB Keyboard");
-    pstrcpy(s->dev.devname, sizeof(s->dev.devname), "UMET USB Keyboard");
+    pstrcpy(s->dev.devname, sizeof(s->dev.devname), "DELL USB Keyboard");
 
     return (USBDevice *) s;
 }

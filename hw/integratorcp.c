@@ -256,7 +256,7 @@ static void integratorcm_init(int memsz, uint32_t flash_offset)
     } else {
         integrator_spd[31] = 2;
     }
-    memcpy(integrator_spd + 73, "UMET-MEMORY", 11);
+    memcpy(integrator_spd + 73, "DELL-MEMORY", 11);
     s->cm_init = 0x00000112;
     s->flash_offset = flash_offset;
 
