@@ -357,7 +357,8 @@ typedef struct {
 
   int (*cjmp) (uint32_t t0);
 #ifdef DEFINE_EIP_TAINTED
-  void (*eip_tainted) (uint8_t * record);
+  // void (*eip_tainted) (uint8_t * record);
+  void (*eip_tainted) (uint32_t next_eip);
 #endif
 #ifdef DEFINE_MEMREG_EIP_CHANGE
   void (*memreg_eip_change)();
