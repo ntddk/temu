@@ -878,8 +878,22 @@ void OPPROTO op_andl_A0_ffff(void)
 void OPPROTO op_jmp_T0(void)
 {
 #if TAINT_ENABLED 
-    taintcheck_check_eip(R_T0);
+    // taintcheck_check_eip(R_T0);
+    taintcheck_check_eip(T0);
 #endif    
+    EIP = T0;
+}
+
+void OPPROTO op_jmp_call_T0(void)
+{
+    EIP = T0;
+}
+
+void OPPROTO op_jmp_ret_T0(void)
+{
+#if RET_ANALYSIS
+    TEMU_ret_analysis((uint32_t)T0);
+#endif
     EIP = T0;
 }
 
@@ -3044,8 +3058,17 @@ void OPPROTO op_call_check()
 {
   TEMU_call_analysis((uint32_t)PARAM1);
 }
-#endif
 
+void OPPROTO op_call_check_T0()
+{
+  TEMU_call_analysis((uint32_t)T0);
+}
+
+void OPPROTO op_call_check_T1()
+{
+  TEMU_call_analysis((uint32_t)T1);
+}
+#endif
 
 #include "opt_op.c"
 
