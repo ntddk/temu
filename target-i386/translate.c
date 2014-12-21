@@ -3882,10 +3882,12 @@ static target_ulong disas_insn(DisasContext *s, target_ulong pc_start)
 #ifdef IMPACT_ANALYSIS
 			gen_op_set_impact_propagate(1);
 #endif
-            gen_op_jmp_T0();
+//            gen_op_jmp_T0();
 #ifdef CALLSTRING_ANALYSIS
-			gen_op_call_check(next_eip);
+			// gen_op_call_check(next_eip);
+            gen_op_call_check_T0();
 #endif
+            gen_op_jmp_call_T0();
             gen_eob(s);
             break;
         case 3: /* lcall Ev */
@@ -3902,7 +3904,8 @@ static target_ulong disas_insn(DisasContext *s, target_ulong pc_start)
                 gen_op_lcall_real_T0_T1(dflag, s->pc - s->cs_base);
             }
 #ifdef CALLSTRING_ANALYSIS
-			gen_op_call_check(s->pc - s->cs_base);
+			// gen_op_call_check(s->pc - s->cs_base);
+            gen_op_call_check_T1();
 #endif
             gen_eob(s);
             break;
@@ -5384,7 +5387,8 @@ static target_ulong disas_insn(DisasContext *s, target_ulong pc_start)
         gen_stack_update(s, val + (2 << s->dflag));
         if (s->dflag == 0)
             gen_op_andl_T0_ffff();
-        gen_op_jmp_T0();
+        // gen_op_jmp_T0();
+        gen_op_jmp_ret_T0();
         gen_eob(s);
         break;
     case 0xc3: /* ret */
@@ -5392,7 +5396,8 @@ static target_ulong disas_insn(DisasContext *s, target_ulong pc_start)
         gen_pop_update(s);
         if (s->dflag == 0)
             gen_op_andl_T0_ffff();
-        gen_op_jmp_T0();
+        // gen_op_jmp_T0();
+        gen_op_jmp_ret_T0();
         gen_eob(s);
         break;
     case 0xca: /* lret im */
@@ -5412,7 +5417,8 @@ static target_ulong disas_insn(DisasContext *s, target_ulong pc_start)
                 gen_op_andl_T0_ffff();
             /* NOTE: keeping EIP updated is not a problem in case of
                exception */
-            gen_op_jmp_T0();
+            // gen_op_jmp_T0();
+            gen_op_jmp_ret_T0();
             /* pop selector */
             gen_op_addl_A0_im(2 << s->dflag);
             gen_op_ld_T0_A0[1 + s->dflag + s->mem_index]();
@@ -5472,7 +5478,8 @@ static target_ulong disas_insn(DisasContext *s, target_ulong pc_start)
 
 #endif //TAINT_ENABLED == 0
 #ifdef CALLSTRING_ANALYSIS
-			gen_op_call_check(next_eip);
+			// gen_op_call_check(next_eip);
+            gen_op_call_check(tval);
 #endif
             gen_jmp(s, tval);
         }
