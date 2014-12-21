@@ -515,7 +515,8 @@ void TEMU_block_end()
 #endif
 
 #ifdef DEFINE_INSN_BEGIN
-void TEMU_insn_begin(uint32_t pc_start)
+// void TEMU_insn_begin(uint32_t pc_start)
+void TEMU_insn_begin();
 {
   if (!TEMU_emulation_started || !should_monitor)
     return;

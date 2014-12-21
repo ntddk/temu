@@ -534,7 +534,8 @@ void TEMU_init();
 int TEMU_block_begin();
 #endif
 #ifdef DEFINE_INSN_BEGIN
-void TEMU_insn_begin(uint32_t pc_start);
+// void TEMU_insn_begin(uint32_t pc_start);
+void TEMU_insn_begin();
 #endif
 #ifdef DEFINE_INSN_END
 void TEMU_insn_end();

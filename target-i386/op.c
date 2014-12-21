@@ -2959,7 +2959,8 @@ void OPPROTO op_insn_end(void)
 #ifdef DEFINE_INSN_BEGIN
 void OPPROTO op_insn_begin(void)
 {
-	TEMU_insn_begin((uint32_t) PARAM1);
+	// TEMU_insn_begin((uint32_t) PARAM1);
+    TEMU_insn_begin();
 }
 #endif
 

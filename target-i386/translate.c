@@ -7129,7 +7129,8 @@ static inline int gen_intermediate_code_internal(CPUState *env,
             gen_opc_instr_start[lj] = 1;
         }
 #if defined(DEFINE_INSN_BEGIN)
-	    gen_op_insn_begin(pc_ptr);
+	    // gen_op_insn_begin(pc_ptr);
+        gen_op_insn_begin();
 #endif
         pc_ptr = disas_insn(dc, pc_ptr);
         /* stop translation if indicated */
