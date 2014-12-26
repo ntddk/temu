@@ -3005,6 +3005,12 @@ void OPPROTO op_taintcheck_jnz_T0_label(void)
     }
     FORCE_RET();
 }
+
+void OPPROTO op_taintcheck_jcc_target(void)
+{
+    // PARAM1 is next_eip which taken
+    taintcheck_jcc_target((uint32_t)PARAM1, (uint32_t)PARAM2);
+}
 #endif
 
 void OPPROTO op_taintcheck_mov_i2m(void)

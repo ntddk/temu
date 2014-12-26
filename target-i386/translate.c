@@ -1882,7 +1882,9 @@ static inline void gen_jcc(DisasContext *s, int b,
     inv = b & 1;
     jcc_op = (b >> 1) & 7;
 
-	if (s->jmp_opt) {
+	// if (s->jmp_opt) {
+    if(0)
+    {
         switch(s->cc_op) {
             /* we optimize the cmp/jcc case */
         case CC_OP_SUBB:
@@ -1968,8 +1970,8 @@ static inline void gen_jcc(DisasContext *s, int b,
 
         l1 = gen_new_label();
 #if TAINT_FLAGS
-        if(func == gen_op_jnz_T0_label)
-          gen_op_taintcheck_jnz_T0_label(l1);
+        // if(func == gen_op_jnz_T0_label)
+          // gen_op_taintcheck_jnz_T0_label(l1);
 #endif
         func(l1);
 
@@ -1994,15 +1996,31 @@ static inline void gen_jcc(DisasContext *s, int b,
         l1 = gen_new_label();
         l2 = gen_new_label();
 #if TAINT_FLAGS
-	gen_op_taintcheck_jnz_T0_label(l1);
+        // gen_op_taintcheck_jnz_T0_label(l1);
+        // gen_op_taintcheck_jnz_T0_label();
 #endif
         gen_op_jnz_T0_label(l1);
+#if TAINT_FLAGS
+        genop_taintcheck_jcc_target(next_eip, val);
+#endif
         gen_jmp_im(next_eip);
         gen_op_jmp_label(l2);
         gen_set_label(l1);
+#if TAINT_FLAGS
+        gen_op_taintcheck_jcc_target(val, next_eip);
+#endif
         gen_jmp_im(val);
         gen_set_label(l2);
         gen_eob(s);
+        //      if T0           :eflags
+        //          jmp L1      :jnz_T0_label(l1);
+        //      jmp next_eip    :jmp_im(next_eip)  eip <= next_eip
+        //      jmp L2          :jmp_label(l2)
+        //L1:                   :set_label(l1)
+        //      jmp val         :jmp_im(val)       eip <= val
+        //L2:                   :set_label(l2)
+        //      end             :gen_eob(s)
+    }
     }
 }
 

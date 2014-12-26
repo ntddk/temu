@@ -420,6 +420,10 @@ typedef struct {
   void (*ret_analysis)(uint32_t next_eip);
 #endif
 
+#ifdef JCC_ANALYSIS
+  void (*jcc_analysis)(uint32_t taken_eip, uint32_t not_taken_eip);
+#endif
+
 #ifdef CMP_ANALYSIS
   void (*cmp_analysis)(uint32_t op1, uint32_t op2);
 #endif
@@ -435,6 +439,8 @@ typedef struct {
   void (*syscall_monitor)();
 
   void (*set_initial_taint_file)();
+
+  void (*tainted_jcc)(uint32_t taint, void *record);
 } plugin_interface_t;
 
 /// This flag tells if emulation mode is enabled

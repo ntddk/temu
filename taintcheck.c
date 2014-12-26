@@ -1477,6 +1477,14 @@ int taintcheck_jnz_T0_label()
   return res;
 }
 
+void taintcheck_jcc_target(uint32_t taken_eip, uint32_t not_taken_eip){
+#ifdef JCC_ANALYSIS
+  if(temu_plugin->jcc_analysis){
+    temu_plugin->jcc_analysis(taken_eip, not_taken_eip);
+  }
+#endif
+}
+
 int taintcheck_check_eip(uint32_t reg)
 {
 #ifdef DEFINE_EIP_TAINTED

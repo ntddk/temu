@@ -170,6 +170,8 @@ int taintcheck_nic_out(uint32_t addr, int size);
 int taintcheck_check_eip(uint32_t reg);
 
 int taintcheck_jnz_T0_label( /*uint32_t t0 */ );
+void taintcheck_jcc_target(uint32_t taken_eip, uint32_t not_taken_eip);
+
 #ifdef DEFINE_EIP_TAINTED
 int taintcheck_check_eip(uint32_t reg);
 #endif
