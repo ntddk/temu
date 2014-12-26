@@ -949,7 +949,7 @@ static LIST_HEAD(disk_record_list_head, disk_record)
 int taintcheck_taint_disk(uint64_t index, uint64_t taint, int offset,
                           int size, uint8_t * record, void *bs)
 {
-  if(!TEMU_emulation_started) return 0;
+  if(!TEMU_emulation_started) return -1;
 
 #ifndef NO_PROPAGATE
   struct disk_record_list_head *head =
@@ -970,17 +970,18 @@ int taintcheck_taint_disk(uint64_t index, uint64_t taint, int offset,
       found = 1;
       break;
     }
-    if (drec->index > index)
-      break;
+    // if (drec->index > index)
+      // break;
   }
   if (!found) {
     if (!taint)
-      return 0;
+      return -1;
 
     if (!(new_drec = qemu_mallocz(sizeof(disk_record_t) +
                               64 * temu_plugin->taint_record_size)))
-      return 0;
+      return -1;
 
+    bzero(new_drec, sizeof(disk_record_t) +  64 * temu_plugin->taint_record_size);
     new_drec->index = index;
     new_drec->bs = bs;
     new_drec->bitmap = taint << offset;
@@ -1029,8 +1030,8 @@ uint64_t taintcheck_disk_check(uint64_t index, int offset, int size,
       found = 1;
       break;
     }
-    if (drec->index > index)
-      break;
+    // if (drec->index > index)
+      // break;
   }
 
   if (!found)
