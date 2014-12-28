@@ -142,22 +142,21 @@ int taintcheck_get_sizeof_taintmem();
 int taintcheck_init();
 int taintcheck_create();
 void taintcheck_cleanup();
-void taintcheck_bswap(int reg, int size) __attribute__((fastcall));
-void taintcheck_fn1reg(int reg, int size) __attribute__((fastcall));
+void taintcheck_bswap(int reg, int size);
+void taintcheck_fn1reg(int reg, int size);
 void taintcheck_clear_ones(int reg, int size, uint32_t val);
 void taintcheck_clear_zeros(int reg, int size, uint32_t val);
-void taintcheck_fn2regs(int sreg1, int sreg2, int dreg, int size) __attribute__((fastcall));
-void __attribute__((fastcall)) taintcheck_logic_T0_T1();
-void __attribute__((fastcall)) 
-taintcheck_fn3regs(int sreg1, int sreg2, int sreg3, int dreg, int size);
-void taintcheck_mem2reg(void *ptr, int size, int reg)  __attribute__((fastcall));
-void taintcheck_reg2mem(int reg, int size, void *ptr)  __attribute__((fastcall));
-void taintcheck_reg2reg(int sreg, int dreg, int size) __attribute__((fastcall));
-void taintcheck_reg_clean(int reg) __attribute__((fastcall));
-void taintcheck_reg2reg_shift(int sregidx, int dregidx, int size) __attribute__((fastcall));
-void taintcheck_reg_clean2(int regidx, int size) __attribute__((fastcall));
-void taintcheck_mem_clean(void *ptr, int size) __attribute__((fastcall));
-void taintcheck_clean_memory(uint32_t phys_addr, int size) __attribute__((fastcall));
+void taintcheck_fn2regs(int sreg1, int sreg2, int dreg, int size);
+void taintcheck_logic_T0_T1();
+void taintcheck_fn3regs(int sreg1, int sreg2, int sreg3, int dreg, int size);
+void taintcheck_mem2reg(void *ptr, int size, int reg);
+void taintcheck_reg2mem(int reg, int size, void *ptr);
+void taintcheck_reg2reg(int sreg, int dreg, int size);
+void taintcheck_reg_clean(int reg);
+void taintcheck_reg2reg_shift(int sregidx, int dregidx, int size);
+void taintcheck_reg_clean2(int regidx, int size);
+void taintcheck_mem_clean(void *ptr, int size);
+void taintcheck_clean_memory(uint32_t phys_addr, int size);
 
 int taintcheck_taint_disk(uint64_t index, uint64_t taint, int offset,
                           int size, uint8_t * record, void *bs);
@@ -193,7 +192,7 @@ uint32_t taintcheck_sidt(void);
 void taintcheck_update_cr3();
 
 #if TAINT_FLAGS
-void taintcheck_update_eflags(uint32_t mask, int which) __attribute__((fastcall));
+void taintcheck_update_eflags(uint32_t mask, int which);
 
 #ifndef CPU_I386_H //copy from cpu.h
 #define CC_C   	0x0001
@@ -209,11 +208,9 @@ static inline void taintcheck_update_all_eflags(int which)
   taintcheck_update_eflags( CC_C|CC_P|CC_A|CC_Z|CC_S|CC_O, which);
 }
 
-void taintcheck_reg2flag(int regidx, int size, uint32_t mask) 
-	__attribute__((fastcall));
+void taintcheck_reg2flag(int regidx, int size, uint32_t mask);
 
-void taintcheck_flag2reg(uint32_t mask, int regidx, int size)
-	__attribute__ ((fastcall));
+void taintcheck_flag2reg(uint32_t mask, int regidx, int size);
 
 #else
 #define taintcheck_flag2reg(mask, regidx, size) \

@@ -191,7 +191,7 @@ static inline uint8_t clear_zero(uint32_t value, int size, uint8_t taint)       
 }
 
 /// Propagate taint info from register to memory
-void __attribute__((fastcall)) taintcheck_reg2mem(int regidx, int size, void *ptr)
+void taintcheck_reg2mem(int regidx, int size, void *ptr)
 {
   if(!TEMU_emulation_started) return;
 
@@ -288,7 +288,7 @@ void __attribute__((fastcall)) taintcheck_reg2mem(int regidx, int size, void *pt
 }
 
 
-void __attribute__((fastcall)) taintcheck_mem2reg(void *ptr, int size, int regidx)
+void taintcheck_mem2reg(void *ptr, int size, int regidx)
 {
   if(!TEMU_emulation_started) return;
 
@@ -392,7 +392,7 @@ void __attribute__((fastcall)) taintcheck_mem2reg(void *ptr, int size, int regid
 }
 
 
-void __attribute__((fastcall)) taintcheck_mem2reg_nolookup(uint32_t paddr, uint32_t vaddr, int size, int regidx)
+void taintcheck_mem2reg_nolookup(uint32_t paddr, uint32_t vaddr, int size, int regidx)
 {
   if(!TEMU_emulation_started) return;
   if(__builtin_expect(paddr >= ram_size, 0)) return;
@@ -502,7 +502,7 @@ static inline void reg2reg_internal(int sregidx, int dregidx,
 }
 
 
-void __attribute__((fastcall)) taintcheck_reg2reg(int sreg, int dreg, int size)
+void taintcheck_reg2reg(int sreg, int dreg, int size)
 {
   if(!TEMU_emulation_started) return;
 #ifdef REG_CHECK
@@ -519,7 +519,7 @@ void __attribute__((fastcall)) taintcheck_reg2reg(int sreg, int dreg, int size)
 }
 
 
-void __attribute__((fastcall)) taintcheck_reg2reg_shift(int sregidx, int dregidx, int size)
+void taintcheck_reg2reg_shift(int sregidx, int dregidx, int size)
 {
   if(!TEMU_emulation_started) return;
 
@@ -536,7 +536,7 @@ void __attribute__((fastcall)) taintcheck_reg2reg_shift(int sregidx, int dregidx
 #endif
 }
 
-void __attribute__((fastcall)) taintcheck_reg_clean(int reg)
+void taintcheck_reg_clean(int reg)
 {
   if(!TEMU_emulation_started) return;
 #ifndef NO_PROPAGATE
@@ -544,7 +544,7 @@ void __attribute__((fastcall)) taintcheck_reg_clean(int reg)
 #endif  
 }
 
-void __attribute__((fastcall)) taintcheck_reg_clean2(int regidx, int size)
+void taintcheck_reg_clean2(int regidx, int size)
 {
   if(!TEMU_emulation_started) return;
 #ifndef NO_PROPAGATE
@@ -552,7 +552,7 @@ void __attribute__((fastcall)) taintcheck_reg_clean2(int regidx, int size)
 #endif  
 }
 
-void __attribute__((fastcall)) taintcheck_mem_clean(void *ptr, int size)
+void taintcheck_mem_clean(void *ptr, int size)
 {
   if (!TEMU_emulation_started) return;
   uint32_t addr = (uint8_t *) ptr - phys_ram_base;
@@ -565,7 +565,7 @@ void __attribute__((fastcall)) taintcheck_mem_clean(void *ptr, int size)
   }
 }
 
-void __attribute__((fastcall)) taintcheck_clean_memory(uint32_t phys_addr, int size)
+void taintcheck_clean_memory(uint32_t phys_addr, int size)
 {
   if (!TEMU_emulation_started) return;
   if (__builtin_expect(phys_addr + size >= ram_size, 0)) return;
@@ -579,7 +579,7 @@ void __attribute__((fastcall)) taintcheck_clean_memory(uint32_t phys_addr, int s
 
 
 
-void __attribute__((fastcall)) taintcheck_bswap(int reg, int size)
+void taintcheck_bswap(int reg, int size)
 {
   if(__builtin_expect(!TEMU_emulation_started, 0)) return;
 
@@ -613,7 +613,7 @@ void __attribute__((fastcall)) taintcheck_bswap(int reg, int size)
 #endif //NO_PROPAGATE
 }
 
-void __attribute__((fastcall)) taintcheck_fn1reg(int reg, int size)        //size<=4
+void taintcheck_fn1reg(int reg, int size)        //size<=4
 {
   if(__builtin_expect(!TEMU_emulation_started, 0)) return;
 
@@ -648,8 +648,7 @@ void __attribute__((fastcall)) taintcheck_fn1reg(int reg, int size)        //siz
 
 }
 
-void __attribute__((fastcall)) 
-taintcheck_fn2regs(int sreg1, int sreg2, int dreg, int size)        //size<=4
+void taintcheck_fn2regs(int sreg1, int sreg2, int dreg, int size)        //size<=4
 {
   if(__builtin_expect(!TEMU_emulation_started, 0)) return;
 
@@ -696,8 +695,7 @@ taintcheck_fn2regs(int sreg1, int sreg2, int dreg, int size)        //size<=4
 
 
 //which=1 means cc_src, which=2 means cc_dst, which=3 means both
-void __attribute__((fastcall)) 
-taintcheck_update_eflags(uint32_t mask, int which) 
+void taintcheck_update_eflags(uint32_t mask, int which) 
 {
 #ifndef NO_PROPAGATE
   if(__builtin_expect(!TEMU_emulation_started, 0)) 
@@ -746,8 +744,7 @@ taintcheck_update_eflags(uint32_t mask, int which)
 }
 
 
-void  __attribute__((fastcall)) 
-taintcheck_flag2reg(uint32_t mask, int regidx, int size) 
+void taintcheck_flag2reg(uint32_t mask, int regidx, int size) 
 {
 #ifndef NO_PROPAGATE
   if(__builtin_expect(!TEMU_emulation_started, 0)) 
@@ -779,8 +776,7 @@ taintcheck_flag2reg(uint32_t mask, int regidx, int size)
 #endif //NO_PROPAGATE
 } 
 
-void __attribute__((fastcall)) 
-taintcheck_reg2flag(int regidx, int size, uint32_t mask)
+void taintcheck_reg2flag(int regidx, int size, uint32_t mask)
 {
 #ifndef NO_PROPAGATE
   if(__builtin_expect(!TEMU_emulation_started, 0)) 
@@ -818,7 +814,7 @@ taintcheck_reg2flag(int regidx, int size, uint32_t mask)
 #endif
 
 
-void __attribute__((fastcall)) taintcheck_logic_T0_T1()
+void taintcheck_logic_T0_T1()
 {
   if(__builtin_expect(!TEMU_emulation_started, 0)) return;
 
@@ -882,8 +878,7 @@ void taintcheck_clear_zeros(int reg, int size, uint32_t val)    //size<=4
 #endif
 }
 
-void __attribute__((fastcall)) 
-taintcheck_fn3regs(int sreg1, int sreg2, int sreg3, int dreg, int size)     //size<=4
+void taintcheck_fn3regs(int sreg1, int sreg2, int sreg3, int dreg, int size)     //size<=4
 {
   if(__builtin_expect(!TEMU_emulation_started, 0)) return;
 
