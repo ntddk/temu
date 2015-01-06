@@ -1701,7 +1701,8 @@ void taintcheck_mov_i2m()
 void taintcheck_mov_m2r(int base, int index, int dreg_id)
 {
   int i, regid;
-  taintcheck_fn2regs(base, index, R_A0, 4);
+  if(base == -1 && index == -1)
+    taintcheck_fn2regs(base, index, R_A0, 4);
 
   for (i = 0, regid = dreg_id; i < physaddr_index;
        i++, regid += physaddr_info_list[i].size) {
@@ -1714,7 +1715,8 @@ void taintcheck_mov_m2r(int base, int index, int dreg_id)
 void taintcheck_mov_r2m(int base, int index, int reg_id)
 {
   int i, regid;
-  taintcheck_fn2regs(base, index, R_A0, 4);
+  if(base == -1 && index == -1)
+    taintcheck_fn2regs(base, index, R_A0, 4);
 
   for (i = 0, regid = reg_id; i < physaddr_index;
        i++, regid += physaddr_info_list[i].size) {
