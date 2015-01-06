@@ -2001,7 +2001,7 @@ static inline void gen_jcc(DisasContext *s, int b,
 #endif
         gen_op_jnz_T0_label(l1);
 #if TAINT_FLAGS
-        genop_taintcheck_jcc_target(next_eip, val);
+        gen_op_taintcheck_jcc_target(next_eip, val);
 #endif
         gen_jmp_im(next_eip);
         gen_op_jmp_label(l2);
@@ -2020,7 +2020,6 @@ static inline void gen_jcc(DisasContext *s, int b,
         //      jmp val         :jmp_im(val)       eip <= val
         //L2:                   :set_label(l2)
         //      end             :gen_eob(s)
-    }
     }
 }
 
