@@ -168,6 +168,9 @@ static inline void taint_register(int regidx, int size, uint64_t taint)
 
 static inline void clean_register(int regidx, int size)
 {
+#ifdef  REG_CHECK
+  temu_plugin->reg_clear(regidx, size); 
+#endif
   uint64_t mask = (1ULL << size) - 1;
   regs_bitmap &= ~(mask << regidx);
 }
@@ -482,6 +485,11 @@ static inline void reg2reg_internal(int sregidx, int dregidx,
     taint = clear_zero(cpu_single_env->regs[sregidx >> 2] >> (sregidx & 3),
                        size, taint);
 #endif
+
+#ifdef REG_CHECK
+  temu_plugin->reg_read(sregidx, size);
+#endif
+
   if(!taint) {
 	clean_register(dregidx, size);
 	return;
