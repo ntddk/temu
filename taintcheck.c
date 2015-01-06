@@ -1492,6 +1492,11 @@ void taintcheck_jcc_target(uint32_t taken_eip, uint32_t not_taken_eip){
 int taintcheck_check_eip(uint32_t reg)
 {
 #ifdef DEFINE_EIP_TAINTED
+  if (!TEMU_emulation_started || !temu_plugin->eip_tainted)
+    return 0;
+
+  temu_plugin->eip_tainted(reg);
+/*
   uint8_t taint;
   if (!TEMU_emulation_started || !should_monitor
       || !(taint = taint_reg_check(R_T0 * 4, 4))
@@ -1506,6 +1511,7 @@ int taintcheck_check_eip(uint32_t reg)
                                 i) * temu_plugin->taint_record_size);
       break;
     }
+*/
 #endif
 #ifdef DEFINE_MEMREG_EIP_CHANGE
   uint8_t taint;
