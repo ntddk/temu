@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include <signal.h>
 #include "qemu-common.h"
 #ifndef QEMU_IMG
 #include "qemu-timer.h"
