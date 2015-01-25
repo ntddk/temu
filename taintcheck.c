@@ -1554,7 +1554,39 @@ static void taintcheck_save(QEMUFile * f, void *opaque)
   }
   TEMU_compress_buf(&state, (uint8_t *)&ending, 4); //ending
   /*TODO: save disk and nic info */
-  
+  // done.
+
+  /*save eflags taint info*/
+#ifdef TAINT_FLAGS
+  TEMU_compress_buf(&state, (uint8_t *)&eflags_bitmap, 8);
+  TEMU_compress_buf(&state, eflags_records, 32 * temu_plugin->taint_record_size);
+#endif
+
+  /*save nic taint info*/
+  TEMU_compress_buf(&state, (uint8_t *)&nic_bitmap, 8 * (1024 * 32) / 64);
+  TEMU_compress_buf(&state, nic_records, 32 * 1024 * temu_plugin->taint_record_size);
+
+  /*save disk taint info */
+  disk_record_t *drec;
+  struct disk_record_list_head *head;
+  i = DISK_HTAB_SIZE;
+  TEMU_compress_buf(&state, (uint8_t *)&i, 4);
+  for(i = 0; i < DISK_HTAB_SIZE;){
+    head = &disk_record_heads[i++];
+    uint32_t count = 0;
+    LIST_FOREACH(drec, head, entry){
+      count++;
+    }
+    TEMU_compress_buf(&state, (uint8_t *)&count, 4);
+    LIST_FOREACH(drec, head, entry){
+      TEMU_compress_buf(&state, (uint8_t *)&(drec->index) , 8);
+      TEMU_compress_buf(&state, (uint8_t *)&(drec->bs)    , 8);
+      TEMU_compress_buf(&state, (uint8_t *)&(drec->bitmap), 8); // taint << offset;
+      TEMU_compress_buf(&state, drec->records, 64 * temu_plugin->taint_record_size);
+    }
+  }
+  TEMU_compress_buf(&state, (uint8_t *)&ending, 4); //ending
+
   TEMU_compress_close(&state);
 }
 
@@ -1573,9 +1605,11 @@ static int taintcheck_load(QEMUFile * f, void *opaque, int version_id)
   if (val != temu_plugin->taint_record_size)
     return -EINVAL;
 
+  /*load registers' taint info */
   TEMU_decompress_buf(&state, (uint8_t *)&regs_bitmap, 8);
   TEMU_decompress_buf(&state, regs_records, 64 * val);
 
+  /*load memory taint info */
   int i;
   for (TEMU_decompress_buf(&state, (uint8_t *)&i, 4); 
        i != -1; 
@@ -1596,6 +1630,39 @@ static int taintcheck_load(QEMUFile * f, void *opaque, int version_id)
     }
     tpage_table[i] = entry;
   }
+
+  /*load eflags taint info*/
+#ifdef TAINT_FLAGS
+  TEMU_decompress_buf(&state, (uint8_t *)&eflags_bitmap, 8);
+  TEMU_decompress_buf(&state, eflags_records, 32 * val);
+#endif  
+
+  /*load nic taint info*/
+  TEMU_decompress_buf(&state, (uint8_t *)&nic_bitmap, 8 * ( 1024 * 32) / 64);
+  TEMU_decompress_buf(&state, nic_records, 32 * 1024 * val);
+
+  /*load disk taint info*/
+  int j;
+  uint32_t size, count;
+  disk_record_t *drec;
+  struct disk_record_list_head *head;
+  TEMU_decompress_buf(&state, (uint8_t *)&size, 4);
+  for(i = 0; i < DISK_HTAB_SIZE;){
+    head = &disk_record_heads[i++];
+    TEMU_decompress_buf(&state, (uint8_t *)&count, 4);
+    for(j=0;j<count;j++){
+      drec = qemu_mallocz(sizeof(disk_record_t) + 64 * temu_plugin->taint_record_size);
+      TEMU_decompress_buf(&state, (uint8_t *)&(drec->index), 8);
+      TEMU_decompress_buf(&state, (uint8_t *)&(drec->bs),    8);
+      TEMU_decompress_buf(&state, (uint8_t *)&(drec->bitmap),8);
+      TEMU_decompress_buf(&state, drec->records, 64 * val);
+      LIST_INSERT_HEAD(head, drec, entry);
+    }
+  }
+  uint32_t ending;
+  TEMU_decompress_buf(&state, (uint8_t *)&ending, 4);
+  if(ending != 0xffffffff)
+    return -EINVAL;
 
   return 0;
 }
