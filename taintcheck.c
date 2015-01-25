@@ -1689,6 +1689,8 @@ int taintcheck_create()
   nic_records = qemu_malloc(nic_records_len);
   reg_records_len = 64 * temu_plugin->taint_record_size;
   regs_records = qemu_mallocz(reg_records_len);
+  memset(regs_records,0, reg_records_len);
+  memset(nic_records ,0, nic_records_len);
 #if TAINT_FLAGS
   eflags_records = qemu_mallocz(32 * temu_plugin->taint_record_size);
 #endif
