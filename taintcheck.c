@@ -1858,7 +1858,7 @@ void default_taint_propagate(int nr_src,
   }
 
   /* deal with multiple sources and tainted index*/
-  for (i = 0; i < nr_src; i++) {
+  for (i = nr_src -1; i >= 0; i--){
     if (src_oprnds[i].taint == 0)
       continue;
 
